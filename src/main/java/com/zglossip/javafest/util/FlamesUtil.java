@@ -1,7 +1,8 @@
 package com.zglossip.javafest.util;
 
 public class FlamesUtil {
-    public static final String MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES_DOT_TXT =
+    public static final String MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES_LABEL = "Madelin Kahn as Mrs. White in Clue saying \"Flames.\": ";
+    public static final String MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES =
             "xxddddoloxdccllc::clllllllll,.               ...,;;,.. ....;'.'.    .''.           ..c0OdkKNNOl::;..\n" +
             "kxxddddddkOxdolc::llllllllol;.               ..............,...      ...            .':cldk0Oxc,''..\n" +
             "xxxddoooox0Odolccclllllllool;.    ..         ...''',;:,,;::'...      ...             ...',;;:,......\n" +

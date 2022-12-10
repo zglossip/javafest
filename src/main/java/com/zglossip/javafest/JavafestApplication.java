@@ -23,7 +23,7 @@ public class JavafestApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		flamesService.printMadelineKahnAsMrsWhiteInClueSayingFlamesDotTxt();
+		flamesService.printMadelineKahnAsMrsWhiteInClueSayingFlames();
 
 	}
 
