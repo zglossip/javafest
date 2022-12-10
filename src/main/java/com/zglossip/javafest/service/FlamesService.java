@@ -9,7 +9,7 @@ import static com.zglossip.javafest.util.PrintUtil.printText;
 @Service
 public class FlamesService {
 
-    public void printMadelineKahnAsMrsWhiteInClueSayingFlames() {
+    public void printMadelineKahnAsMrsWhiteInClueSayingFlames(Integer size) {
         printText(MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES_LABEL);
         printText(MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES);
     }

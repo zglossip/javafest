@@ -1,6 +1,20 @@
 # JavaFest
 I'm going into this with no plan. Let's see what each release brings us.
 
-## Releases
-### v1.0.0 Madeline Kahn as Mrs. White in Clue saying "flames."
+## Current Functionality
 I like it when Madeline Kahn as Mrs. White in Clue says flames, so I made a jar that prints Madeline Kahn as Mrs. White in Clue saying flames. I like to think that justifies its own release.
+
+## Instructions
+* Download most recent `javafest-1.x.x.jar` file from "Releases"
+* Navigate to directory in command line and run `java -jar .\<FILE_NAME>`
+
+## History
+### 2022-12-10
+* Started with a simple Spring Boot jar setup with simple MKAMWICSF functionality.
+
+## Release Log
+### v1.0.0
+Initial release of Madeline Kahn as Mrs. White in Clue saying "flames."
+
+### v1.1.0 (WIP)
+Add custom sizing option
