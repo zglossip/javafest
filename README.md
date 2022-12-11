@@ -37,3 +37,7 @@ Add custom height option
 ### v1.3.0
 
 Change how args are handled
+
+### v1.4.0
+
+Add custom picture option

@@ -17,11 +17,11 @@ public class ArgumentUtilSpec {
     args[0] = "-w";
     args[1] = "100";
 
-    final Map<ArgumentType, Integer> expected = new HashMap<>();
+    final Map<ArgumentType, Object> expected = new HashMap<>();
     expected.put(ArgumentType.WIDTH, 100);
 
     //When
-    final Map<ArgumentType, Integer> result = ArgumentUtil.getArguments(args);
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
 
     //Then
     assert result.equals(expected);
@@ -34,11 +34,11 @@ public class ArgumentUtilSpec {
     args[0] = "-h";
     args[1] = "100";
 
-    final Map<ArgumentType, Integer> expected = new HashMap<>();
+    final Map<ArgumentType, Object> expected = new HashMap<>();
     expected.put(ArgumentType.HEIGHT, 100);
 
     //When
-    final Map<ArgumentType, Integer> result = ArgumentUtil.getArguments(args);
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
 
     //Then
     assert result.equals(expected);
@@ -53,12 +53,12 @@ public class ArgumentUtilSpec {
     args[2] = "-w";
     args[3] = "200";
 
-    final Map<ArgumentType, Integer> expected = new HashMap<>();
+    final Map<ArgumentType, Object> expected = new HashMap<>();
     expected.put(ArgumentType.HEIGHT, 100);
     expected.put(ArgumentType.WIDTH, 200);
 
     //When
-    final Map<ArgumentType, Integer> result = ArgumentUtil.getArguments(args);
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
 
     //Then
     assert result.equals(expected);
@@ -69,10 +69,10 @@ public class ArgumentUtilSpec {
     //Given
     final String[] args = new String[0];
 
-    final Map<ArgumentType, Integer> expected = new HashMap<>();
+    final Map<ArgumentType, Object> expected = new HashMap<>();
 
     //When
-    final Map<ArgumentType, Integer> result = ArgumentUtil.getArguments(args);
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
 
     //Then
     assert result.equals(expected);

@@ -16,6 +16,14 @@ public class JavafestService {
     this.printService = printService;
   }
 
+  public void exec(final String filepath, final Integer width, final Integer height) {
+    if (filepath == null) {
+      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+    }
+
+    //TODO: Print custom image
+  }
+
   public void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
     final AsciiImage image = flamesService.getMkAscii(width, height);
     printService.printText(image.getImage());

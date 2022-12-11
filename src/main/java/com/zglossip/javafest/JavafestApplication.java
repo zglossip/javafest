@@ -27,12 +27,13 @@ public class JavafestApplication implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
 
-    final Map<ArgumentType, Integer> argumentMap = ArgumentUtil.getArguments(args);
+    final Map<ArgumentType, Object> argumentMap = ArgumentUtil.getArguments(args);
 
-    final Integer width = argumentMap.get(ArgumentType.WIDTH);
-    final Integer height = argumentMap.get(ArgumentType.HEIGHT);
+    final Integer width = (Integer) argumentMap.get(ArgumentType.WIDTH);
+    final Integer height = (Integer) argumentMap.get(ArgumentType.HEIGHT);
+    final String filepath = (String) argumentMap.get(ArgumentType.FILE);
 
-    javafestService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+    javafestService.exec(filepath, width, height);
 
   }
 

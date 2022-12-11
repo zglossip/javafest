@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 
 public class ArgumentUtil {
 
-  public static Map<ArgumentType, Integer> getArguments(final String[] args) {
+  public static Map<ArgumentType, Object> getArguments(final String[] args) {
     if (args.length == 0) {
       return Collections.emptyMap();
     }
 
-    final Map<ArgumentType, Integer> argumentMap = new HashMap<>();
+    final Map<ArgumentType, Object> argumentMap = new HashMap<>();
 
     final Map<String, ArgumentType> flagMap = Arrays.stream(ArgumentType.values()).collect(Collectors.toMap(
             ArgumentType::getFlag, Function.identity()
@@ -30,6 +30,7 @@ public class ArgumentUtil {
           position++;
           argumentMap.put(argumentType, getIntFromValue(args[position]));
         }
+        case FILE -> argumentMap.put(argumentType, args[position]);
       }
 
       position++;
