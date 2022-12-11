@@ -11,7 +11,8 @@ in Clue saying flames. I like to think that justifies its own release.
 
 * Download most recent `javafest-1.x.x.jar` file from "Releases"
 * Navigate to directory in command line and run `java -jar .\<FILE_NAME>`
-* To specify an optional character width, run `java -jar .\<FILE_NAME> <CHARACTER_WIDTH>`
+* To specify an optional width, run `java -jar .\<FILE_NAME> <WIDTH>`
+* To specify an optional height and width, run `java -jar .\<FILE_NAME> <WIDTH> <HEIGHT>`
 
 ## History
 
