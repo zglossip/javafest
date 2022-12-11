@@ -25,19 +25,29 @@ public class JavafestApplication implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
 
-    Integer size = null;
+    Integer width = null;
+    Integer height = null;
 
-    if (args.length > 1) {
-      throw new TooManyArgumentsException();
-    } else if (args.length == 1) {
-      try {
-        size = Integer.parseInt(args[0]);
-      } catch (final NumberFormatException e) {
-        throw new NonNumberArgumentException();
-      }
+    switch (args.length) {
+      case 2:
+        try {
+          height = Integer.parseInt(args[1]);
+        } catch (final NumberFormatException e) {
+          throw new NonNumberArgumentException();
+        }
+      case 1:
+        try {
+          width = Integer.parseInt(args[0]);
+        } catch (final NumberFormatException e) {
+          throw new NonNumberArgumentException();
+        }
+      case 0:
+        break;
+      default:
+        throw new TooManyArgumentsException();
     }
 
-    flamesService.printMadelineKahnAsMrsWhiteInClueSayingFlames(size, size);
+    flamesService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
 
   }
 

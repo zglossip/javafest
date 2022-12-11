@@ -50,8 +50,8 @@ public class FlamesService {
   }
 
   private static String getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final boolean print) {
-    final int validatedWidth = getValidatedSize(width);
-    final int validatedHeight = getValidatedSize(height);
+    final int validatedWidth = getValidatedWidth(width);
+    final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
 
     for (int y = 0; y < validatedHeight; y++) {
@@ -70,12 +70,20 @@ public class FlamesService {
     return asciiString.toString();
   }
 
-  private static int getValidatedSize(final Integer size) {
-    if (size == null) {
+  private static int getValidatedWidth(final Integer width) {
+    if (width == null) {
       return DEFAULT_SIZE;
     }
 
-    return size;
+    return width;
+  }
+
+  private static int getValidatedHeight(final Integer height, final int validatedWidth, final int origWidth, final int orgHeight) {
+    if (height == null) {
+      return validatedWidth * (int) Math.round((double) orgHeight / origWidth);
+    }
+
+    return height;
   }
 
   private static int convertPosition(final int position, final int validatedSize, final int actualSize) {
@@ -86,7 +94,7 @@ public class FlamesService {
   private static String getFooter(final Integer width) {
     final StringBuilder stringBuilder = new StringBuilder();
 
-    final String spaces = getSpaces((getValidatedSize(width) - FOOTER_WIDTH) / 2);
+    final String spaces = getSpaces((getValidatedWidth(width) - FOOTER_WIDTH) / 2);
 
     Arrays.stream(FOOTER.split("\n")).forEach(string -> {
       stringBuilder.append(spaces).append(string).append("\n");
