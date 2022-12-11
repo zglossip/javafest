@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.domain.AsciiImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ public class JavafestService {
   }
 
   public void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
-    printService.printText(flamesService.getMkAscii(width, height));
-    printService.printText(flamesService.getFooter(width));
+    final AsciiImage image = flamesService.getMkAscii(width, height);
+    printService.printText(image.getImage());
+    printService.printText(flamesService.getFooter(image.getWidth()));
   }
 
 }

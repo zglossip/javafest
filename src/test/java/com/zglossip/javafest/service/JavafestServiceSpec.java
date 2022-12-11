@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.domain.AsciiImage;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,7 @@ public class JavafestServiceSpec {
     final String mkAscii = "MK ASCII";
     final String footer = "FOOTER";
 
-    when(flamesService.getMkAscii(width, height)).thenReturn(mkAscii);
+    when(flamesService.getMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
     when(flamesService.getFooter(width)).thenReturn(footer);
 
     //When

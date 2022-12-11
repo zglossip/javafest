@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.domain.AsciiImage;
 import com.zglossip.javafest.exceptions.ImageException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
 public class FlamesService {
 
   private static final String IMAGE_PATH = "madeline_kahn_as_mrs_white_in_clue_saying_flames.png";
-  private static final int DEFAULT_SIZE = 200;
+  public static final int DEFAULT_SIZE = 200;
   private static final int FOOTER_WIDTH = 69;
   private static final String FOOTER = """
            ________ ___       ________  _____ ______   _______   ________
@@ -32,14 +33,14 @@ public class FlamesService {
                                                                               
           """;
 
-  public String getMkAscii(final Integer width, final Integer height) {
+  public AsciiImage getMkAscii(final Integer width, final Integer height) {
     return getAsciiStringFromImage(width, height, getImage());
   }
 
-  public String getFooter(final Integer width) {
+  public String getFooter(final int width) {
     final StringBuilder stringBuilder = new StringBuilder();
 
-    final String spaces = getSpaces((getValidatedWidth(width) - FOOTER_WIDTH) / 2);
+    final String spaces = getSpaces((width - FOOTER_WIDTH) / 2);
 
     Arrays.stream(FOOTER.split("\n")).forEach(string -> {
       stringBuilder.append(spaces).append(string).append("\n");
@@ -57,8 +58,8 @@ public class FlamesService {
     }
   }
 
-  private static String getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
-    final int validatedWidth = getValidatedWidth(width);
+  private static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
+    final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
 
@@ -75,12 +76,16 @@ public class FlamesService {
       asciiString.append("\n");
     }
 
-    return asciiString.toString();
+    return new AsciiImage(asciiString.toString(), validatedWidth);
   }
 
-  private static int getValidatedWidth(final Integer width) {
+  private static int getValidatedWidth(final Integer width, final Integer height, final int origWidth, final int orgHeight) {
     if (width == null) {
-      return DEFAULT_SIZE;
+      if (height == null) {
+        return DEFAULT_SIZE;
+      }
+
+      return height * (int) Math.round((double) orgHeight / origWidth);
     }
 
     return width;

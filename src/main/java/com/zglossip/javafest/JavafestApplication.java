@@ -1,12 +1,14 @@
 package com.zglossip.javafest;
 
-import com.zglossip.javafest.exceptions.NonNumberArgumentException;
-import com.zglossip.javafest.exceptions.TooManyArgumentsException;
+import com.zglossip.javafest.domain.ArgumentType;
 import com.zglossip.javafest.service.JavafestService;
+import com.zglossip.javafest.util.ArgumentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.Map;
 
 @SpringBootApplication
 public class JavafestApplication implements CommandLineRunner {
@@ -25,27 +27,10 @@ public class JavafestApplication implements CommandLineRunner {
   @Override
   public void run(final String... args) throws Exception {
 
-    Integer width = null;
-    Integer height = null;
+    final Map<ArgumentType, Integer> argumentMap = ArgumentUtil.getArguments(args);
 
-    switch (args.length) {
-      case 2:
-        try {
-          height = Integer.parseInt(args[1]);
-        } catch (final NumberFormatException e) {
-          throw new NonNumberArgumentException();
-        }
-      case 1:
-        try {
-          width = Integer.parseInt(args[0]);
-        } catch (final NumberFormatException e) {
-          throw new NonNumberArgumentException();
-        }
-      case 0:
-        break;
-      default:
-        throw new TooManyArgumentsException();
-    }
+    final Integer width = argumentMap.get(ArgumentType.WIDTH);
+    final Integer height = argumentMap.get(ArgumentType.HEIGHT);
 
     javafestService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
 
