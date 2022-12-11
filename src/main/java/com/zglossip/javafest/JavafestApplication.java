@@ -2,7 +2,7 @@ package com.zglossip.javafest;
 
 import com.zglossip.javafest.exceptions.NonNumberArgumentException;
 import com.zglossip.javafest.exceptions.TooManyArgumentsException;
-import com.zglossip.javafest.service.FlamesService;
+import com.zglossip.javafest.service.JavafestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,11 +11,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class JavafestApplication implements CommandLineRunner {
 
-  private final FlamesService flamesService;
+  private final JavafestService javafestService;
 
   @Autowired
-  public JavafestApplication(final FlamesService flamesService) {
-    this.flamesService = flamesService;
+  public JavafestApplication(final JavafestService javafestService) {
+    this.javafestService = javafestService;
   }
 
   public static void main(final String[] args) {
@@ -47,7 +47,7 @@ public class JavafestApplication implements CommandLineRunner {
         throw new TooManyArgumentsException();
     }
 
-    flamesService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+    javafestService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
 
   }
 

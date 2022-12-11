@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
-import static com.zglossip.javafest.util.PrintUtil.printText;
 
 @Service
 public class FlamesService {
@@ -33,11 +32,20 @@ public class FlamesService {
                                                                               
           """;
 
-  public void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
-    final BufferedImage image = getImage();
+  public String getMkAscii(final Integer width, final Integer height) {
+    return getAsciiStringFromImage(width, height, getImage());
+  }
 
-    printText(getAsciiStringFromImage(width, height, image, false));
-    printText(getFooter(width));
+  public String getFooter(final Integer width) {
+    final StringBuilder stringBuilder = new StringBuilder();
+
+    final String spaces = getSpaces((getValidatedWidth(width) - FOOTER_WIDTH) / 2);
+
+    Arrays.stream(FOOTER.split("\n")).forEach(string -> {
+      stringBuilder.append(spaces).append(string).append("\n");
+    });
+
+    return stringBuilder.toString();
   }
 
   private static BufferedImage getImage() {
@@ -49,7 +57,7 @@ public class FlamesService {
     }
   }
 
-  private static String getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final boolean print) {
+  private static String getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
     final int validatedWidth = getValidatedWidth(width);
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
@@ -62,7 +70,7 @@ public class FlamesService {
         final int convertedX = convertPosition(x, validatedWidth, image.getWidth());
         final int convertedY = convertPosition(y, validatedHeight, image.getHeight());
         final Color color = new Color(image.getRGB(convertedX, convertedY), true);
-        asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen(), print));
+        asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen()));
       }
       asciiString.append("\n");
     }
@@ -89,18 +97,6 @@ public class FlamesService {
   private static int convertPosition(final int position, final int validatedSize, final int actualSize) {
     final double multiplier = (double) actualSize / validatedSize;
     return (int) Math.round(multiplier * position);
-  }
-
-  private static String getFooter(final Integer width) {
-    final StringBuilder stringBuilder = new StringBuilder();
-
-    final String spaces = getSpaces((getValidatedWidth(width) - FOOTER_WIDTH) / 2);
-
-    Arrays.stream(FOOTER.split("\n")).forEach(string -> {
-      stringBuilder.append(spaces).append(string).append("\n");
-    });
-
-    return stringBuilder.toString();
   }
 
   private static String getSpaces(final int numberOfSpaces) {

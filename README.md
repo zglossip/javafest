@@ -33,3 +33,7 @@ Add custom sizing option
 ### v1.2.0
 
 Add custom height option
+
+### v1.3.0
+
+Change how args are handled
