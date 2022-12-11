@@ -1,6 +1,6 @@
 # JavaFest
 
-I'm going into this with no plan. Let's see what each release brings us.
+I'm going into this with no plan and am making it up one feature at a time. Let's see what each release brings us.
 
 ## Current Functionality
 
