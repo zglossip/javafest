@@ -29,6 +29,6 @@ Initial release of Madeline Kahn as Mrs. White in Clue saying "flames."
 
 Add custom sizing option
 
-### v1.2.0 (UPCOMING)
+### v1.2.0
 
 Add custom height option
