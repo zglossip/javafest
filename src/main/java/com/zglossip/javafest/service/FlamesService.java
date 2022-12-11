@@ -1,17 +1,106 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.exceptions.ImageException;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import static com.zglossip.javafest.util.FlamesUtil.MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES;
-import static com.zglossip.javafest.util.FlamesUtil.MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES_LABEL;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
+import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
 import static com.zglossip.javafest.util.PrintUtil.printText;
 
 @Service
 public class FlamesService {
 
-    public void printMadelineKahnAsMrsWhiteInClueSayingFlames(Integer size) {
-        printText(MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES_LABEL);
-        printText(MADLINE_KAHN_AS_MRS_WHITE_IN_CLUE_SAYING_FLAMES);
+  private static final String IMAGE_PATH = "madeline_kahn_as_mrs_white_in_clue_saying_flames.png";
+  private static final int DEFAULT_SIZE = 200;
+  private static final int FOOTER_WIDTH = 69;
+  private static final String FOOTER = """
+           ________ ___       ________  _____ ______   _______   ________
+          |\\  _____\\\\  \\     |\\   __  \\|\\   _ \\  _   \\|\\  ___ \\ |\\   ____\\
+          \\ \\  \\__/\\ \\  \\    \\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\   __/|\\ \\  \\___|_
+           \\ \\   __\\\\ \\  \\    \\ \\   __  \\ \\  \\\\|__| \\  \\ \\  \\_|/_\\ \\_____  \\
+            \\ \\  \\_| \\ \\  \\____\\ \\  \\ \\  \\ \\  \\    \\ \\  \\ \\  \\_|\\ \\|____|\\  \\
+             \\ \\__\\   \\ \\_______\\ \\__\\ \\__\\ \\__\\    \\ \\__\\ \\_______\\____\\_\\  \\
+              \\|__|    \\|_______|\\|__|\\|__|\\|__|     \\|__|\\|_______|\\_________\\
+                                                                   \\|_________|
+                                                                              
+                                                                              
+          """;
+
+  public void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
+    final BufferedImage image = getImage();
+
+    printText(getAsciiStringFromImage(width, height, image, false));
+    printText(getFooter(width));
+  }
+
+  private static BufferedImage getImage() {
+    try {
+      final InputStream inputStream = new ClassPathResource(IMAGE_PATH).getInputStream();
+      return ImageIO.read(inputStream);
+    } catch (final IOException e) {
+      throw new ImageException();
     }
+  }
+
+  private static String getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final boolean print) {
+    final int validatedWidth = getValidatedSize(width);
+    final int validatedHeight = getValidatedSize(height);
+    final StringBuilder asciiString = new StringBuilder();
+
+    for (int y = 0; y < validatedHeight; y++) {
+      if (y % 3 != 0) {
+        continue;
+      }
+      for (int x = 0; x < validatedWidth; x++) {
+        final int convertedX = convertPosition(x, validatedWidth, image.getWidth());
+        final int convertedY = convertPosition(y, validatedHeight, image.getHeight());
+        final Color color = new Color(image.getRGB(convertedX, convertedY), true);
+        asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen(), print));
+      }
+      asciiString.append("\n");
+    }
+
+    return asciiString.toString();
+  }
+
+  private static int getValidatedSize(final Integer size) {
+    if (size == null) {
+      return DEFAULT_SIZE;
+    }
+
+    return size;
+  }
+
+  private static int convertPosition(final int position, final int validatedSize, final int actualSize) {
+    final double multiplier = (double) actualSize / validatedSize;
+    return (int) Math.round(multiplier * position);
+  }
+
+  private static String getFooter(final Integer width) {
+    final StringBuilder stringBuilder = new StringBuilder();
+
+    final String spaces = getSpaces((getValidatedSize(width) - FOOTER_WIDTH) / 2);
+
+    Arrays.stream(FOOTER.split("\n")).forEach(string -> {
+      stringBuilder.append(spaces).append(string).append("\n");
+    });
+
+    return stringBuilder.toString();
+  }
+
+  private static String getSpaces(final int numberOfSpaces) {
+    final StringBuilder spacesBuilder = new StringBuilder();
+    for (int i = 0; i < numberOfSpaces; i++) {
+      spacesBuilder.append(" ");
+    }
+    return spacesBuilder.toString();
+  }
 
 }
