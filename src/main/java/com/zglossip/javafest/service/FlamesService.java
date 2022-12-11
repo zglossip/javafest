@@ -84,7 +84,7 @@ public class FlamesService {
     final StringBuilder asciiString = new StringBuilder();
 
     for (int y = 0; y < validatedHeight; y++) {
-      if (y % 3 != 0) {
+      if (y % 2 != 0) {
         continue;
       }
       for (int x = 0; x < validatedWidth; x++) {
