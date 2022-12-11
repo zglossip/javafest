@@ -20,6 +20,7 @@ public class JavafestServiceSpec {
     //Given
     final Integer width = 100;
     final Integer height = 100;
+    final boolean inverted = false;
 
     final String mkAscii = "MK ASCII";
     final String footer = "FOOTER";
@@ -28,7 +29,31 @@ public class JavafestServiceSpec {
     when(flamesService.getFooter(width)).thenReturn(footer);
 
     //When
-    javafestService.exec(null, width, height);
+    javafestService.exec(null, width, height, inverted);
+
+    //Then
+    final InOrder inOrder = inOrder(printService);
+
+    inOrder.verify(printService, times(1)).printText(mkAscii);
+    inOrder.verify(printService, times(1)).printText(footer);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @Test
+  public void testPrintMadelineKahnAsMrsWhiteInClueSayingFlamesInverted() {
+    //Given
+    final Integer width = 100;
+    final Integer height = 100;
+    final boolean inverted = true;
+
+    final String mkAscii = "MK ASCII";
+    final String footer = "FOOTER";
+
+    when(flamesService.getInvertedMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
+    when(flamesService.getFooter(width)).thenReturn(footer);
+
+    //When
+    javafestService.exec(null, width, height, inverted);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -44,6 +69,7 @@ public class JavafestServiceSpec {
     final Integer width = 100;
     final Integer height = 100;
     final String filepath = "file.jpg";
+    final boolean inverted = false;
 
     final String ascii = "ASCII";
     final String footer = "FOOTER";
@@ -52,7 +78,32 @@ public class JavafestServiceSpec {
     when(flamesService.getFooter(width)).thenReturn(footer);
 
     //When
-    javafestService.exec(filepath, width, height);
+    javafestService.exec(filepath, width, height, inverted);
+
+    //Then
+    final InOrder inOrder = inOrder(printService);
+
+    inOrder.verify(printService, times(1)).printText(ascii);
+    inOrder.verify(printService, times(1)).printText(footer);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @Test
+  public void testCustomSayingFlamesInverted() {
+    //Given
+    final Integer width = 100;
+    final Integer height = 100;
+    final String filepath = "file.jpg";
+    final boolean inverted = true;
+
+    final String ascii = "ASCII";
+    final String footer = "FOOTER";
+
+    when(flamesService.getCustomAsciiInverted(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
+    when(flamesService.getFooter(width)).thenReturn(footer);
+
+    //When
+    javafestService.exec(filepath, width, height, inverted);
 
     //Then
     final InOrder inOrder = inOrder(printService);

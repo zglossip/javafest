@@ -32,8 +32,9 @@ public class JavafestApplication implements CommandLineRunner {
     final Integer width = (Integer) argumentMap.get(ArgumentType.WIDTH);
     final Integer height = (Integer) argumentMap.get(ArgumentType.HEIGHT);
     final String filepath = (String) argumentMap.get(ArgumentType.FILE);
+    final boolean inverted = argumentMap.get(ArgumentType.INVERTED) != null && (boolean) argumentMap.get(ArgumentType.INVERTED);
 
-    javafestService.exec(filepath, width, height);
+    javafestService.exec(filepath, width, height, inverted);
 
   }
 

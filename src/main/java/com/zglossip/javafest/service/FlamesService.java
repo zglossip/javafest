@@ -12,8 +12,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.function.Function;
 
 import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
+import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
 public class FlamesService {
@@ -35,11 +37,27 @@ public class FlamesService {
           """;
 
   public AsciiImage getMkAscii(final Integer width, final Integer height) {
-    return getAsciiStringFromImage(width, height, getMkImage());
+    return getMkAscii(width, height, null);
+  }
+
+  public AsciiImage getInvertedMkAscii(final Integer width, final Integer height) {
+    return getMkAscii(width, height, INVERT_COLOR_FUNC);
+  }
+
+  private AsciiImage getMkAscii(final Integer width, final Integer height, final Function<Color, Color> colorFunc) {
+    return getAsciiStringFromImage(width, height, getMkImage(), colorFunc);
   }
 
   public AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height) {
-    return getAsciiStringFromImage(width, height, getCustomImage(filepath));
+    return getCustomAscii(filepath, width, height, null);
+  }
+
+  public AsciiImage getCustomAsciiInverted(final String filepath, final Integer width, final Integer height) {
+    return getCustomAscii(filepath, width, height, INVERT_COLOR_FUNC);
+  }
+
+  private AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height, final Function<Color, Color> colorFunc) {
+    return getAsciiStringFromImage(width, height, getCustomImage(filepath), colorFunc);
   }
 
   public String getFooter(final int width) {
@@ -78,7 +96,7 @@ public class FlamesService {
     }
   }
 
-  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
+  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final Function<Color, Color> colorFunc) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
@@ -90,7 +108,10 @@ public class FlamesService {
       for (int x = 0; x < validatedWidth; x++) {
         final int convertedX = convertPosition(x, validatedWidth, image.getWidth());
         final int convertedY = convertPosition(y, validatedHeight, image.getHeight());
-        final Color color = new Color(image.getRGB(convertedX, convertedY), true);
+        Color color = new Color(image.getRGB(convertedX, convertedY), true);
+        if (colorFunc != null) {
+          color = colorFunc.apply(color);
+        }
         asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen()));
       }
       asciiString.append("\n");

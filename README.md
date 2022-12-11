@@ -14,6 +14,7 @@ in Clue saying flames. I like to think that justifies its own release.
 * To specify an optional width, add `-w <WIDTH>`
 * To specify an optional height, add `-h <HEIGHT>`
 * To specify a custom picture (to say "flames"), add `-p <FILE_PATH>`
+* To invert image colors, add `-i`
 
 ## History
 
@@ -42,3 +43,11 @@ Change how args are handled
 ### v1.4.0
 
 Add custom picture option
+
+#### v1.4.1
+
+Expand default height to match PowerShell
+
+### V1.5.0
+
+Add ability to invert image

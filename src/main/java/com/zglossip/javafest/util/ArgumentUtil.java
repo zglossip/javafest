@@ -34,6 +34,7 @@ public class ArgumentUtil {
           position++;
           argumentMap.put(argumentType, args[position]);
         }
+        case INVERTED -> argumentMap.put(argumentType, true);
       }
 
       position++;

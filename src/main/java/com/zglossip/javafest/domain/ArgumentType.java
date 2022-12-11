@@ -1,7 +1,7 @@
 package com.zglossip.javafest.domain;
 
 public enum ArgumentType {
-  WIDTH("w"), HEIGHT("h"), FILE("p");
+  WIDTH("w"), HEIGHT("h"), FILE("p"), INVERTED("i");
 
   private final String flag;
 

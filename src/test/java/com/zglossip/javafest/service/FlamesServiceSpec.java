@@ -6,9 +6,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Function;
 
 @SpringBootTest
 public class FlamesServiceSpec {
@@ -30,6 +32,20 @@ public class FlamesServiceSpec {
   }
 
   @Test
+  public void testPrintDefaultInvertedPicture() {
+    //Given test data
+    final Integer width = null;
+    final Integer height = null;
+
+    //When
+    final AsciiImage result = flamesService.getInvertedMkAscii(width, height);
+
+    //Then
+    assert result.getImage().equals(getInvertedDefaultMkAscii());
+    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+  }
+
+  @Test
   public void testPrintCustomPicture() {
     //Given test data
     final Integer width = null;
@@ -44,13 +60,43 @@ public class FlamesServiceSpec {
   }
 
   @Test
+  public void testPrintInvertedCustomPicture() {
+    //Given test data
+    final Integer width = null;
+    final Integer height = null;
+
+    //When
+    final AsciiImage result = flamesService.getCustomAsciiInverted("./src/test/resources/good_for_her.jpg", width, height);
+
+    //Then
+    assert result.getImage().equals(getDefaultInvertedAltAscii());
+    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+  }
+
+  @Test
+  public void testPrintPictureWithFunction() {
+    //Given test data
+    final Integer width = null;
+    final Integer height = null;
+
+    final Function<Color, Color> colorFunc = color -> Color.CYAN;
+
+    //When
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), colorFunc);
+
+    //Then
+    assert result.getImage().equals(getAllCyanImage());
+    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+  }
+
+  @Test
   public void testPrintPicture() {
     //Given test data
     final Integer width = null;
     final Integer height = null;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(getDefaultMkAscii());
@@ -64,7 +110,7 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -78,7 +124,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -92,7 +138,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100Height150WidthMkAscii());
@@ -234,6 +280,109 @@ public class FlamesServiceSpec {
             "luYYxEayakqSSwkSSy]ax}x2u/*cccccr!cc*c**/LL(c?Jvs3Cv)}Iu[[nYynn[y5Y[1lx[1ltteIff}}(sF{}tn5Y5en[lt3IIfICCFJ){CtuunaNBKbAGUD[nladuOqhZPSyow2not[[tvzz/cr+>=<;+^,;^_::_^^==!(F7!zL/*r?LLczc!>+!xIojXpYOE96E\n" +
             "uuI3}I{{C{t1lZZnlnx2S]j!!+<<><><>++++++++r!!rr/Js(L7II3I3tu[ZeZnZ[nt3lZl131enuIII{f3ltt13nxyjjjxYZonen[[ul3I{3Zjjx]X0DROEIlYqqYV29ExPyy2xnujyouuu+r*c+>=<;+<,,-c<L<',=^=<(7)<zzz*rcJT///z!r|FYYdkPS6P6Yw\n" +
             "J(}tZaayeeI{{|7(FIoxZC!+<>====;==>><>><+>++++++!/!*)CI33I311un1Zltn3}Iet333l[55ZuZueoZnuuC3e5jaayx5ZZZoee[[tCxwyn2hdNgmAfIawyoOSkyxq]jyay1tY5nnn[fJ/+;>==<r=,,-?LcLr_^,^<zTTrcL?*cs/sv(T)!sJT356Op6[]n1x\n";
+  }
+
+  private static String getDefaultInvertedAltAscii() {
+    return "hd2]x2]ExjeuZu13t[31utu1IIlwd94OVwwSwkd4hV9VObGVKXXKUAbbUbUGVH0#UAdpUAAKHHm8m$BgBXUAUGppp9PSi{{{}3[Zn2oS69SenawhpphkhaoYSPP9qEhwYwdwnZxy]a2SS22kP2xnxy2]PSq62wkkP2awwx`    `...-.....-.-''''''':':':__^,\n" +
+            "6d2aYEa2yYe5lt1133ntluuf3f1Sdd4OVwwSw6hG44UVpbGOKXKXAUbbbUUbVX08$KGpVObUAHm8g0ggmAHUUbGOpdh9q{}}}}l5nSewhhSonawhpVdkhao5SP66q24EYwd2eYxya]SwE22kq]Y[jj2]PSqk2wqkk]]wq*`    `...-.......-''''':-:::::__^,\n" +
+            "Pd2axS]2ajeue[ululI3e[[tuut]p99pVSwEE66UGp4GObKOKmXKAUUbUbKUVXB8RB8XKXKXmm8M00g8mRHKUAbGOV4d9qyIC}nZnwZqhhSe[yw64Vdq6aZ5whhPkSV]xk42n5xy]]Sq2]Skw]5nxjE2hSqk]wqkk]awk. `   ``..-.......---''':'':::_::__\n" +
+            "642jYwEaxZultt1333If1ttut[1ad9dV4SwESk9VUGpAOUKGKmHKAUUbUAKbOKDDDRR#B8XH$NMM0B$RHmKAUUAOOpVd9h6Pn}e5nqok99SenywhOV9wkyenakPkkSpajkdjeYxy]wwq]2SkwaZ[xjE]hEkk2wkkka2qw.`   ``...-....----'-'''''::'::::__\n" +
+            "69]jYwS]aZ[ulZZn1III1[u[ut[2999p4ww2q69dAAGAXKXbKHXAAAbUAXHGOKRDm8R8DBg00M00B$DRmHHKAKGbGOpVVVd9P]ZZnkZ6h9SonywhVVdwxZe[5qESYyk5ykdxn5xySSSq2ESkSyonxxE]hSqk]qkPk]2qZ.    ``..--....----'''-''::_:::___,\n" +
+            "qd]yYSS]ao[[n5Zon3I33ul[u1ly9hVpVwwwkhVVbXAbHmKAHmXKUbbUXKAVGA8$RmD8RDD$BBgB$$$DmmmHXKUUbGGbGOppd9EZZPohh9wo[yk6PwwSajYxEa2xoyE2]k6xeYj]SSwqE2SkSyenxxE]hSqk2wkkkjSq>   ````.--..-...--''-'-':::_:::_,,,\n" +
+            "qd]x52wyaonuleenu3333utut31ydhVOpw2wqPdV48XbHmUAHHXUUbbKKAUpGA8#mm888RR#$BB$##RRmmXXKAUGGObUbOppOV95owZ9hhSZn]wYa]wqdAdk4EEySxSwEqExZ5x2wSSSEESkEjnnxxS2PEqk2wkkkyEq. ` ```...-..-.----''''''-'::':_:^_,\n" +
+            "q42x5ySxyY5neenne11t[1Iu1ItyVdVOVS]2qk6VOX8XmmGAXKAUbOUKKAUOGUHRR8mmmR#$D#$$#RRmmHXKXKUUAUAAGOOObOph5SZ9hdwZn]2wqOOKUA8KOOVPyyq26hkwE2a2]]wS22wqEjenxjw]6Sqk2wq6kjSw` `````..-'..-.----'''''''::::___^_^\n" +
+            "q42j5]EEy5nnueeen1131tetIf1x49VOV]kKDBDXUbD8K#GKmXKUppUKAUUGGAX88mHXmR8RRR8888mmmHHKKKKAKXAbppGAHUOVwwo999SZZ]qVb8D#RXHmXHGkOO6wwqdPwkSEaSkwEEwkEY[eYxw]hSqk2qkPqxwl` ``....-'--'------'''''::_______^_^\n" +
+            "kd]xZSS2aYnuunne[33I1ue[[1IYd4VpdkAmD$B#KAXDm#UXmXAUObUAAbbGGAXm88XKKXmm8R8m8mXXHXXXKAAXKKUOVOUDmGGp4EZ994woakdU#gRRAUXXXKOXAGGOO9hkkqSqqSwSE]Sq2YueYxS26Sqk2qkkqyE>`.``...--:--'-----''':''':_______^_^\n" +
+            "q42xY]w2aZo[utl1t3I1u[[u1I3jdVVpk4UKKKXD$8A$RHAHXKUbGAKKbUGUAAXH8mmKXHmHmHmmXHHHKHKXKKXKAUbOOURRAUAUpPZ9d4wxkkb#ggU4PVUGOpGUUH49Gd999kqk6hqS]awq]5ueYjw2PSkqEqkkqyS.`.``...-':-------':'':':::___::_,^,=\n" +
+            "kdEj52]2aoZZnt131t[l1tn[llnad4dPSq9OGbKX8RHX#XAHHKbGUAKKAbGUAKXmXHHXXXKKXXmXHKHXmXAKAAKKUUGpGX$mAAXUUpxdVVq2kpK$B]xYaww]aS64GbX8mGOkV6qqqGVS22kq]5unYjw26SqqSkkkkyS........-:'-''---''::::_:::____,_,,,=\n" +
+            "PdEYZ2ayyZ5nouutut1u1[u1uIuYhqSwqGXUppAXmD88#HKHHAObUAAUUbbbAXmmXXHXXXXKHXXXKXXXKXKKKAAAUbOOK$$XAXmUAK9dd4wwPVK05ultuntlloxwhOAmm84969qk6VGVESkwaZuoxjSS6SkqSkk6qy3.......-'_'-:'---''::'__:__,,__^_^^^=\n" +
+            "kd2xZyyajjYonne[nlleuut13IIYkP6VKm8Hp4OGmR$8#XKHKUOGUAAKbbbUAXm8HHm8XHXKXXXXKKKKAKAKKKAUUOGOHgRKAmmbHHA94d]k96gjl1fff}f33l[ey6pXR8Dd9hhkhVppdqPwaouoYjwS6wkqEkk6w]'......'-'_':::--'':_::__,_^,,__=_;^^=\n" +
+            "Pd2YYy]jxxY5eolt[[ln[uttIfIZd6bXmVVX8X8$R8D#DKXmAObUUUAAAAUAKHR8HKXXXXKHXHXXKKXXKAAKAKAUbGGUB0mXHRXAHR8OhhEh44Ket3IIf3I13t[eZySdHDB8GhPk4VOVpkkSyeloYxww6wkqSkkPS]-.....--'__''''''''___:,_^,^,,,,=_=^^=\n" +
+            "k4SY5x]xxayZZ5euZolnel331IIY6XAwqh69GmgXR#BBgKXKbGUUAUAAAUAKKmR8mXXXXHXKXXKKKKKKAKKKKKKUGOUXM#XX88KU8D8Ud6qd4Rx[l}1333lt[n[o55a2VHBgUqwkVOAVOVwwjntZ5ySwPwkwwk66Ee......'-:__':'::'::__,_,_,^^^^,,^,;^==\n" +
+            "PdE55xaxZxoZ5Zeuee[uu13III3ZG2wPhh49d99hhmggBXKAGbAKKAUAUAAKH888HXKXXXXKKKKKKKKUUAKXAKUGGGKRN8H8RmAHHRm8pkwdO8ol33I1IIf3tune5Yy26A8B89E69ObbOOV2xnto5xSwkwPSwk6PE*.....-'':__'::::::__,,,,,^,=^^,^^^;=;=\n" +
+            "69EYYxjxyYx55Z[len[nnt1II3t2h9hddpOO49hdp4Og$XKbGbKUUAAKKKAAXm88HXXXXXXKAAKAKKXAUAKAAAAbUbK008mDDXKXKK$Rd]q48qu3I3u1fII3tu[eZ5jkhUH88dkdkpbpUGpSYn1ZYySwqw6SwPP62'------':_^_:___:__,,,,^,,,^===^==^;;;;\n" +
+            "h9SY5xjx5Yx5YZnueenn[313335KOAHD$$B#8DgDU94U#HAbbbAAAAAKKKKXH8mmHHKKKXXAKKAUAAAUUAAAAUbbUAHN$HD$8XXmKK#HAqkVBY6dSZ5tunuuun[ZoYywhGXmRPw494KbpGpVY[1Z5ySkww6SwP66a'---'-:'_,^________^,,,=,^^==;=^===>=>;\n" +
+            "99SY5xjYYxjoYZut[en[[II333wX$$mXRP]j55YjkBH4$mKAKAAAAKKXKXXXm88mmHKXKKXXKAUAAAAAKkhpOOUUbAmW#R$DmXm8KUDKhw6U$Z]p4Seo5S4d6wSZ5aaS9UmD#6wd9V8UGGOpau3Z5ySkwq6SwP6hi---'''::_,^____,_,_,,,,=,=^;=>==;==>;>>\n" +
+            "hhSY5xyYy5oeZenluen11133fupKOGDGSyY55555aE9gADXKKKKXXXHXmHKm8m8mmXXXHXXXAUUUAAUKUk6Abp466bRMDRR8XH8KXKDXqq6Kq4hpV2e[akhOp]oaxyayhA8DB966P4ORAbGOq[3oYyEqwqPSqP66:-'':''::_^,,,____,,,^^^=^=^>=>=;>;;>;<<\n" +
+            "hhS55YjyxxYZellt1uunn[t1}jhGKNKqEajxY5ZZYySh0RmXXXHHXXHm88mm88mXKXKKKKKAAUUUbUAAdVVh9VKGPdD0DDDmXRDBD88Kqk9UVGKUq][[2YwVV5dayw]yEbRR$4hhPVOHRXbpVeIoYyEqSk6Sq666::::::__,,=,,_,,,,,^,==^==>^;=>>;<;>>;<<\n" +
+            "hhSY5xayYY5x5Zlu[neett113wOU8BhqSE]yx5ZZZ5x24BD8mmHmmmmmmmmm8mHHXKAKXKKAAAAUUUUAdA94KVVOdpNMR#Rmm$$gRDDKk6kbkX6qkeIeYEhO8X6h2a]229DDRV6h6OGRR8KAV53ZYaEkEq6Sq66Y::::_'__,^=,,,,,,^^=^=====>=<;>>;<;<<<!+\n" +
+            "96S55xyYyyyYYelttneoo[111PKG$HPqwSSE]j55ZoooZZEmDDR8888m888m8mmmXXXXXXAAAAbUUUUG49ppOOVOmbWgRDm8Bg08m$8AdV6byYY5I1eoy[ZYPhGK42ES]SmD#O6ddAUA#BDbpw1Z5aEkEq6Sk6h='::__:__,>=,^,,,^===^^=;;=;=><<<><><<<++\n" +
+            "h625Yxa]a5yxYZutnooetullIqmANDdPkkkkwEaxY5oeZ5YjSm#RRRRR8mmm88XHXXXKKXKAAUbbbAUbUbGVXGVGAKWBD8#DBMDmR$mAddPGlII}C5]yolluoy55]]]a2EhgRX996UKbX#R8O9nZ5]2kSq6Eq6h,:__:__,,,<^^^^,^^=^=;;=>;>;><+++++<+++!!\n" +
+            "hhS55xEayxjZZZut[Z[e[llu1uKDRNX66h6PPqq22ajx5YYYYY]mRDR$RR8mHmHHXXKXKKKKAUUUKUUbGAAXmXGbX$WD#D$M0Dm8#DXX4h951}3xZyY]ol}3t[eo5xj]22wmDm999PDXHKRHKk2Z522kEqPEwkx,______,,^+^^^^^^^==;;>;<;<><<!+++++!+!!!\n" +
+            "66S55x]2]y55nnlttuuunnot1IG0ABNO66666PkqwE]a5ene5o[njADD8R8888mHXXAKKKXKKAAKAUbbUKKXXmXD$0MB#D0M$8m##8UVhdd51IZSEbdxa[I3ueZ5xjaSSSq4BXA4Vd8$XmXAOhkZ522PEqP2q6>_____,,,,>+^^^^======>>><><>+<!+++++r+!r!\n" +
+            "6PE55y2E]y5onu[ult[un[etluwBAK0g6PqqwqkPkwj[ZxxwkYYawkV##RR88HmHHXKKKKKXXKAKUAUAKKHm8RDBg00$$0MB8HD$DKK5whGo[nY6wSXd]Zu[oYxja]]wwwk9mRA9Vd48gDKmK4[Z5226Eq6EqP^,,_,,,^,=+>^^^===;;>>;>+<<++!+c+!r!!r!crc\n" +
+            "6kE5YyS22joneneunltt[oeun[e8KK808kkwqqqqkkS]2a2SaEqa2khm#8Dm88mXHHKXXXXXHHXXKAAUXm8DD$gggM0ggMgRmD$mHAG464KoZZ1[xaaaaueo5y22]a]Swq64HDphOVVAR#B$HPe55E]h2kPEPY,,,,^,,,=>r;====;=>;<<><+++++!!cr!rcrccccc\n" +
+            "PPS55aS]yxe[[uun1tt1l[l[[ntOGbURWXPkkkqqk2wqEwqEyPx55wP4m842mmHXXXKXXXXXHHXXXAKXm8D$BBgggMMg00$m8m8AUGhq6VK551Ite[Z5n[oZ5ySw2]]Sqq64X$b4VG99H8R#ROYZ5S2h2k6S6;,,,^^,^^=<+;;===;=><<<<+++!!!rcccccrccc**c\n" +
+            "6PS5YaS225en[eY5Yuttt[nn[unuOOKK$NMVPkkPqxaPEwwE2hxj]y/zLcT7hpVmKXKXXXHm8mmXXmm88D##Bgg0MN000$R8RmXUGVq24UKxYEPqyy555Z5YxaESaa]Eqq69d$HdPpU9dXR#bpo5YS262khwq;>;>+<+!!*//****/zss??sLTLLLLTvvvvTTLLLsLLL\n" +
+            "9PSZ5xwa2Yon[[5Y5[t1tZ[nntt3fYXKKDBMH<^,^{EPww6w6d5yqEz+><=^+sJFdAXXKHHKmmXm8RRRD$$BBB00MNgMgD88R8Hm894pVGK2jV#Ohdbh]yy]j]E2aa]2wkPh9#m9q4dKUpbGpptZYS26]k6w/****//zzssvTTTTvvv)JJJ7((((|Fii{{ii{{C}}}}f\n" +
+            "h6SZ5xSjjjZenZZee[l1utt[nll33u1o9RDHC;;=;Jq6kk9P64Eq4qC7s?z*+<+/nXXXXHmHXmHRR#D$B$$gggMNWNMN$D#gMNN0089kPVHqa4pX8DDK4w]Ey]S2aa]2wkPdpg#9h9VKKXKGbbn5YS]6]q6q/c**z//z?LTvvvvv)J7777J7((7((|ii{{{C}C}}}}fI\n" +
+            "q92Z5Y]ayxoon5ZZonu[[nul13t33IIl113}+;=;=*Pp6hdP9V6VVS5uC?c*c*T|IKXHmHmHm8D#D$$BgBgg00MWWN0ggM0RmHHUbmGPd8B4yawSaEqkkwPEj]S]]a]Ew6hV48U94h94HHUAOdYZYw]62k6Y|Jc<_______!___,,^=^;><!c*zLT)7FiCI1l[neojaa\n" +
+            "kPkZ5aSEa5e[un55o[1tttonu13I|r*ruuIz>===>/ehOVGp4p4dVVUUKLc**/sL<nUm8mmHm8D#$BBBgg00M0NWQNNNB80B8XUH$hhEwbApj52P6PkS2E]EEE2]a]2wq6d4pHhh4V9OAX8RUOnZYw]h2khwkE3L^--.-.```` `````....---''-'''''''::':?en\n" +
+            "kwhyZjE]]Y5[u[nu1111[oe[u1f|f}C|?Jt+====<L3w9UGGbGA49bUXXLcc//sTzJfmHX8mmRRD#$Bggg000MWWWMN$Rd6kk6mUOUROVVGU5n5oYxj]2ES]wES]]ESqk6A9pVhh4VdbAAXRUO[ZYq2hEP6wP6h2wk9qwPqkh62Sw]Yu}(JTs*r!+!<+<><<,^^,_J1t\n" +
+            "Pkhk5xyxYnoutttlII1l1t[[uliI1llu{vr+=^=>rv35]hm8DR4PAHmHXT*c*/sLv{}K8Rm8RD#$BBBBgg0MWNGnZZx2Sqqqh668UUUmp9Avett1noYjayj]E2222ESqP4Dhd9kVOdVUGX8DKUuZYq]h2P6wP6h2qk9SkhwkhPE6dV496EPVpSk6hVGS69d9q9G4}rT|\n" +
+            "kqwp2x5Zenultt13I}}{{{iFi7{|||F|F|c!>==>r)ItjPRRmR88D8XHUz**+*LTTvZSm8888DD#gggg0MMNNAeo]]Exjh6hhddVRAAOGPhO[u[u55xxYxa2E]22SwkkdK#G9kVGbpUAA8$DXGeZYq2hEkPwPh9]qk9SkhwPhkS64pVd6SPVpSkhhpGS6999EhxYx5oe\n" +
+            "PqwVEa5oe[1I}{iF|((((vJJ(F)vJJJJ)s/!>==;;/vJ{j9qvv)(itY5T++*</LTvTCf888mR#B$g0ggM0WWWxZxSEq3Ix94VVVpXRAmXGYHq5ya]yyYx222]2]SqkP9bX8h]hAAKKAKX8mX9eZ5YqEhEkPwkh9]qkdSPhk6hkw64pV4kw6OGSk96pOShd97!^!,+/v)\n" +
+            "Pqw96d6kkqESEEE2]]aaayo|u5YY5Z5Zez*!<<==>=<t1[[[[lultt}<^^^>rzsLTvv|m888D#BB0g00MNWWNw5ahGn[IYSUUUUUX8KRKX6hpjSwSES2SwSSSwqk6h4OOXK6npXAmbAm$$Rb[3[5Yq2hEkkwPh9]k6VSPhq6hqwk4pV4PqhOOEkh6ppS64I/cZJzs)Tz\n" +
+            "PqwPVSaYZoeenn[nnneee17neeeoeeZZ3/r!!+<>>=;>;>>>>><;>>;=^=><+c/sTvL)aDRDD$Bg000NWNWNgf}nOmP}5qVbXXKX8gXRmm#Y4bSwqqkkkP6P6h4VVd44Gm$G5KKAmK8K8RmH3I[ZYk262Pkq66haq6dSPhq6hqwk4VV4PqhOOSkhhOpShd^(/Zrz>r;^\n" +
+            "6kSwO2jZn[l1t3IIIfIIf}f}}}f}}}}}szr!crrr!!!r!rccccrrc!cc*****/z?LTTL(R8DDBggNM0MMHt=so6eet[]hpGGmmm8BMmm#i*(upbAkPk66hh99999hhhdbmBb}RDX88KmK$mu}}[ZxkE6EPkk6h9aq6dSPhwhhww6VpV4qkhGGSk9hOVS9dh*/=,__:_>\n" +
+            "6kwwVSyZ[lt13IffffCCCf{C{{CC{{{iTc!rrr!!!!!!!rrcccccr!cc****//z??sLJJ8DD$$B0Rj{>!?*+v!f4GVpGAAXG88DB0NRB)ISq9P]mS6499h6hd9666h99Om$hEm#$RXHX#X5I}}[ZYqS6S6qk6h9aq6dEP9qhhww6dpp4qqhGVSkh6OVShd9,:'=<>+?z\n" +
+            "kkqw4PaZut13ff}CCCCi{{{{{{i{iiivsc!!+!!rrcrr!r****cr+!c*/cc///////zzzK#GLJ*L**i/>ic*!zE$D88mHAmm8$gNNMHpzu9d4q5Ewqhh666hhh6kP6h6OKROd$D88HX$Uuff}}n5YkSkw6wq6h9aqh4S69qhhSq6VVVVqqhbVEP96pdwhh9)!?s))|(F\n" +
+            "kkqS64ye1I}C{{{iFF||F|||FFF||||Tc**r**cr*ccc*ccc**cc***cc***rc/J|Jsc+<s3*Tc?cvJL>rzs?fj$8mAmXXKHDgNWW0K*L3OOpq]ESS9hh6khPPkkPPkPOUR$gB$B$B893I}}}}n5xqSPE6qq6h9aqhdSP9qh9wk6pV44wk9bdEk96O9wh9q1LT7|((CC\n" +
+            "wkqEkS3t}{F(vv?*(JI(JJJJ)J)))J)vF}s*cccc!ccccccc**cc!****//z???zs?ss?czCzzr/?r**!)7iIYbmm8RAKAXm0WNMMBmzL(6bGV69a]69hPPPkkkPPqk6dOADDB0BB#9tI}f}}}nZxPEqw6wq6hhakhdSPhqh9qk6VVV4Sq9GdSkhhOhSh9i/L?vv((7J\n" +
+            "*++ccc!!c!/Lsr+cr*zsT7||||ii(|||(JvJTccrr!cr!c*cccc!<r*///z/z?ss?sTTvvLvJ/T+c!/c+vsueERDRXHAKMWWM0g7c<!//s1KXXG2aS6hhPPhkPPPk66694GOGKB82uuII}}}}}e5jkSkwPSk69h]khdw69qhhqkPV444SPdb9SP99bhw9ns!/*L!vLLs\n" +
+            "!!c*ccc/rc!cc!!<<<++cz*r/*r+=;+*+;>+cc>vsrJ?>>/r+Ll]2]a]yxaYYYxja]]2EqEy}*+!vs?cILfYZ]m8$RmpsogNC++!!!*?//iUwaoZy2P9h66hPkPqqkP6h99dddOKkYtIIf}f}}e5xkwkw6Skk9h]kddS6hk99wk6444dSPdAdS69hG9wks<!c/c'z//*\n" +
+            ")7Tsc<>><r+r!!!>><!c*+><<<sT(}{s<><!s+==>+!*z<>J(+c(Tz/^;zi<c+!>/+</J/>!r<!/c)/ZJfEexAX8HAU2fn}++/!rrrzs/*vhyZe5y]khkkkkPkkkkkPhh6h99dVR4w]of}f}}}e5jkSqS6SPPdh2qd9qh6k9hwkP4VddEPdU4Sh96Ghl>,><,<,,cccc\n" +
+            "*>>><+<+/7l[)c/sT)Jv7c+L7u|r*s||}1uicr//L|!>*!c7c+({*sti}csT[?zJTr<f!+)I+z|cz|5f}y]wamOpmDVZZ7!*z?c**czs//L5oneYy]qkkkqqkP6k66Ph6kP666dOg9Sxu}}f}}e5xqwqShEPkd6EqdhwhPk99wPP4VddEk4bVE6hhGT=_;,_,_';_c!!\n" +
+            "xYYZ5uC{Jv?i}foE5t7{I}3ltiJJ|Zlv7711u5etT/z)i|*//*T7zj7C1nu7{iS|CC|7TZ}n]qn{f1[yqEqEdUp4bKul|ccTJs*z*czs///{enuYjSwwwqqqkkqkPkk6kqkqkkPhVgPxtlff}}oYyqwqwhSPkd6Ek46k6Pk9hqP6VVddEk4b42(c>=__^^,,,:'>':+<\n" +
+            "e1I31lnnn[[lt))vC{}y2e{i33113IJ(|Z[(J|lnYjxeT*T?(cs|3I(yCf5x5|CC2{1it(lola5ui5Sk22whUVhdOX[n!rz7J?s?*/sL//*v5enxyEESqqqqk6P6PkkkqkqSSwqP9GG7{f1fffoYjwwwwhSk6dPEk46khkk9hq66V4d92P4Uhi+,:__,,,___',*r/<=\n" +
+            "tf1lY26{7itoe[o5[77|C{tySoif[1CII(7JIY{7|3tl[nI*+vt(}11|{a|5eeu}iny(f1ZluZt32t]h22hVGhk9dHYzc*T()??zzzzz?z/sZZZxa]]EwqkkPPP6PkqwwwSEEE]]2JJ{1t1fffoYxSqwqhEk6dk2k46k9Pk96w6hVVVd2k4Gd)L?*/!__!>;<=r/+*r!\n" +
+            "ene5j5Z{(uao{{IZoYYoe(7(C|ie2Z}It11}tC(7to{zz/|{[I|iYL}tu}}k(xZe1)|yeYZ531[x{uEPkdphG6qhhDjc*s)JJsz*szzzzz/*7aoxjj]EqPkkPPkkPkwwSE]]]y3J({311ll3}IZ5ySwSw6EkPdqSPVkkhkPh6wP6OV49]PVUq/s/=L*!+//*//svsv/r\n" +
+            "[t13l[otttI{(Cx]3Fin5eZoeu|vv)7ea533If3IiT*cT}vsvtyu|IeJf3lI}a7Z[nifuhn1xe}ZiEEqV9GPO96dkXT*zLJJT?z*zzz/zzz*LY5e5x2]qh9PkkqqkwwS]]]57)(C333IIltt}fe5yqSwwhEP64qwP4qk9kPh6wP6VVVd26VUq?zr!c!/;^''_zz*+L7z\n" +
+            "enuZZ5x[fI}}31tIiFnqZC|IexZne[(/s)CoaZi7|vL??szi5CCuoi{f[)3tZiIa|Ye51nPYZl23I]S4pVX6A9k^<Lsczv))vz/*z/z/?z?zzJa[xaYywPkSkSSSEE2]]iL)FCII3ICi|CCI1fZ5awwwwhSk64SwPVqk9kh96w66VV492PVG6Tzc>!^___::_!/r!TFL\n" +
+            "2yeou3ulee}7(3IIttu}CieknCCtZ5ollF/*((1Zx{JJLT{I|ulfIj[CleIF3tn(l{122nuYxaI|xahpOVXdX^^<;!>>*LvvLz/**z//z?s?zsYxZ5oY22222]2]2yITv)F{}If}FJ)TT)|{tIZYawwwwhSkhdSw6Vwkhq6h6w66VV4h2Ppbhvvzs//?<!,,=+!+,^!>\n" +
+            "Z55jx]w2fC3Cuo1i|C3I31nl{i}yw3CtnZ[f1{sTsT7[Z3}1I17Y}i3ou|3o1CItIJwtE2ynew7oxnpAppA{,_,=^=;^_=)Ls**r*//z//s?z/vy[[Zo5YyajfsTLv77|iCCCii)LszsLvft13ZYaSqSw9Sk64Eq6dwkhqP96w6hVV462POb6)sTvL/c*c*T*<?z7|3L\n" +
+            "a5u3t33I5a5fF{ff3ZeI(|C3IIolIi|n2I7}ue[CC)*czI]]1lufiy(ftEt{I[}|C}Iey2oYdI[5IwpGVi?c==!<=,,c,=sL/zrrc***z/z/z**|5ZZZ5{sLT77(F|FiCC}i|7vss??C|vJFiIeYaSqSq9Sk6dSqhVSk6qh9Pw6hpV4P26OU6f(zJsTs//TT)TsJC(IC\n" +
+            "3I3tItnx11[a]jjI|FCI3onC(CI3311fiJi2u|7Cu1{i1J/1P1t13IulClY]{1{eT}eZuwxxYfu{{{O9dw==+/>^,,c*+cTs*crrr*/***/TqkSCL?sTvT77|||{{{{FiiF(vL?szCLLL)J(|ClYaSqSq9SkhdEw94Sq6qhhPw6hp4dk2POUk3J=s?7zvF7sJ(vT(z(}\n" +
+            "ZeoZZZo[C[FF|1uZy]xu((}3f[xu7JCi(f1fF)tylJvC[l3I)ekItfuFo3J1aj(}o1}Y5ajh}CtlI{C{||{3?[(r7<L/7wys*r!!cc*//zEqw2jZJ77ii|F{i{i{iiiiiF(T?z/)zz?zsLv)fCtYaSqEq9Skhd2w94Ekhqh9Pq69p44P26Gbku)r!7/7JTzJz!{v)!cT\n" +
+            "]]Z[u[uu[IifxZ|((f[uYy]Z3FC}CCo177iCiFC|TL7Zy|F{{FL5a{}31FZffuY[|IyuaY9YoeZy555ZltE6V9h9dd9OGaL?c!!!c/*/eI}lo5n3CF|{{C{{iF|F||(|JvLzsvz??szzs|i)FI3Y]SqSqhSkh92qd4269khhkq6dpV4PEhGbqZ7T+zsJ*JT)v?tiL/e}\n" +
+            "1tu5y]wka113{||IxuFJF31oy]2Y{J|Ci1[(s|F7iiIiJJtwf7((|El113I{573uxIowyjwZ]SS6kkEP3e]]wwyt}Il3t|?z!rr!*/c2i?zT)7|7F(|iCii|{F||(()7vLszz??//zLiTL)|iCle2Eq2q6wP992w9dEPhkh9kqPdVVVkShObPe7J!<|Tv(7/r|LzvLr^\n" +
+            "yZ[tItI3I53u[13tI7|i[53J|}tuojynFvJ)7}{(|(|7{f1}{ISZf732I1lt|Iuiu2aaS6y2{3yYwpV6E]Syaaoe5ZtI1}CCv*rc//2]Jz/zLT))7C77i|FFF||(77)vLsJ*Ls?zzFs|((((i}332EkEkhSP94Eqd4wP9kh9qk6dpVVkwhbUkZJvv!s**z?/i}|v}t?u\n" +
+            "]a]a]]jaxllEoCC33113t{(JCZ5|(7Ctnxj5F*?L)C3iJ{I}3tt11jYCJxC1tfFnJewS52k1uet1C}tloySaY]PPwaxZxjy5[t3I7nZCvsz///?LvJLTT)J((7(JJJvTT)sT)szTCCf7JJ(F7f31ESkSk9wkdd2q44SPhkh9qkh4p4VwShGGkj)7f|7z7JzC(/}t/*[(\n" +
+            "dPa[nt3I[Zt}C3jEyC(ItI31t3i(71e(LvCu[ZyxF/)FffZuv}1tne1IZw1i|t1fFao]P]kw2y2Syj]Y23Z9[lY6A8pPkE]YZeell3IfvvLzz/zzsL7LzLTv)J))JvJj/svJL/TIIFLsv7{i|I3tuyaEw6S64d2qddEP6k9dwqh4pVVwS9GbquFf7Tt;TT}Lv3?z}F7J\n" +
+            "[t1I}}towSneIF|{ClY]yIC3[u[II{7T}5C)J)CCu2a3svJC3517I[nx5I1S]fC}t[5jy6w9h66h6Pk6kEkUelZaeeZS4VPSajYZe33elJ)Lz///zs)/z?sTTLLT)nC/L7(T/TCt{vsv(FFii11lu9k46wwxen3|Zo1JewPq]qhVVVVwE9bUqnvJ3|()C7(JC3iCotLu\n" +
+            "utuno5ZY5[loZo5Zl|(Fi{nSSnf{II}{}|v?7efTTT{3eSd2}C335n|unejy[[6k[nEqPhuZahdpOGGUGGUAVkkPxoo[uutYq6S2yxYYj}7)T??///L???s?v|fuIT/T(|Tzs{1IvsT7{{{{{1lu[Vdhw}j2PpOS='<!-!*9[i6VVdpwwdGbkuf}1{{}CICti7lfv(t7\n" +
+            "Yo[1t3f1[[lx}ClZo5ZZZC(){I1ZEZFF}I|F|7vTL1[i{IIujEqZ31lZe1[Yx]y1Ikyy6xEZYaq29VVVVVpOUOdu4k2]5Ye[ut1IlZ5ajj[7JJ)Tsz/)*/v*J7v<JT)(|s/Linu(?T|}{i{{|tl[[dpO|hSpmXy]6J<cZn(tq|P4pd}SS9bbqY(|}7}?|}|33Iu}3utI\n" +
+            "lluoneY5jx[t{xEuiiuo5ZZou{|7CIuay3(({|CF{77i3xEEE2]]wkennjw]n[t15yy624e5nddqVdpVVGUUpuss7pOh622]y5nl31txya5e(((J)vsLs}Ly[[5}*t{JLzz(le(z)CI}i{iCC1uu[ZVipXw8V2q9xOe|IGYIUEIethaaEhh7|nf((zs**c/LJJ}i3Ifv\n" +
+            "]Ejxee13IttltetiilSy{|3eZZZeZ3(iC|Ixx3v({C1[eo5ZeeenZYY5j2oIoYt)]y66dyyl[tPw!bKUGOpIc?sL?*4OVO9qkqw2Yeex2]aZe(|F7JJ)Jl[aTT}niJ}z??J3ev)CfI{(||i}ItuunZt}8Rbau5ESkgK2YXDdHPz3j6[Sjt7FxtInl3}{i}||{{ii{f|)\n" +
+            "oeZZjZxaESSZIlI3t[u{FCxS3F|loZnee}JFFC}xyoIfn5Yaxjyxy]22222EEo}nxo6ESPxZ3ww9dOAph2]i/Lv?z/zkVpxAd46SkSyy2jEyZZ|F|ii{}fCJ^c7EtvtLz7}uF{1tC(J7|FC}tt[1tC}5RBatjVS6K0B8OX$gmD9nd9]q6i?/efCui3ff}3{f)7[(t31(\n" +
+            "I3CCIf1I1tnZunii{1ftlulCF3jk}(ie5Zonu}(F}1eEPPkqw]2ajx555xYZoYYSxoxdkk1[5w{4VpOhwk]ETLTszz//*dey6S2EkPSEy2aaYe1(F(|iIlnCI(iqC)n/J}n1It1FJJ)(i{}fu[1un5th8#Z3nujyZ000$mg0D$Ui94pwaYel(77n731331I|)Ct|1lC(\n" +
+            "C{I}}f3l[ZyxtIfuZef|fft13tl3{|e]I7feono5nt}f1ueooneoZ5xyjaESkSwa[Z]k6a]ek3?y]VV9VdanoLTzs?z/*TyG9wyu[ySS2aaaaxY(Jv)7ij/51}Cy)1/T{nn1lC())J(i{}f3tl3ul3uDRBjaSk6dEY#NW#NNghhYqdpj9we5f77eJ3o[}nu{{}3i3{tC\n" +
+            "nuu[n[nlZnnl3]o|C{tfe5uCJf1tI11f)7YEI||[xxyY]2S2Sw]]yxyant}CF(uu[h26hqeq[toKEdGbVP]E]LTsLssz/*I9VV9kEayaS2xa2xxZvLssviSfo[ysxzT}noeI()TT7J|{}1uuC55[layBK0p9Vhd4GXWWQ0NND46t16VVhq|EP5u31[Yo3jl3I1[|{|3u\n" +
+            "u3ffC{}3t[eno1ny]EYC|Cl}tYZ3Ji}CfttIiCeP]1C[ea]SSaSPEwq]]yo5eeeuuPw9h25nnva$6VpG4kyXlTLLTL?z/*/Yk2w4h9PqSPaa2Eay|Tz?Tc[jyeJezv{t5o3Jvsv7F|CC3C|{3u7YPqnnHBg8BgWBMWWQ%NQNmnnnnkp49kaEk][IoZ][uynt1ne|lCe1\n" +
+            "l[eejaSwhPkE5u{{t[oy]aeCi{}I1ZIJ7{Cfu[1I}}ewdOp9h]x5YxZ[IIC3n5Yt3eSPh]ae}(3KdpOG4Pw]{JLTLLL?////kkPk9hhPwEE2]]EyYTssT]]]S5nzLCIy53JTJJF}ffIZnf3CiCZqqa[j20gMMNNM0N$RHNNBSxleZYV9kxx39keIn5]ZoaZeu55Cotjt\n" +
+            "}IIff}3}fI3111CooCFifunx]axu{|FFto}7(fIfnxyxyaayYjyjx5nu313uZ25YPZwVha31ji3UGhpOV9dy1|sLvTLsz///cV96wSqkwqww2]ajynvszz)i1izLC3y53i{C}113fIFiI|1?nE]aEZeYx#$gNNWNBDR#XW8dZh[ykkwaVdUKO4aujY]ax]yjYyalZoyf\n" +
+            "xayjjYjx5jxxYol1{(7lxtiF|3n[5xY37iCI[Z[3fttuZ5yjxxxxYZnZ[nenttelkIkhooow5CFbJhpOp2moI7sTTvTLLz//**6dVdh6kkwkESa2]j?sLLszz?JCtnYn1IfC}{{{fu7}{i{yy][enSZxwAAH0WWWNMWW8Hbp4dVObpGGOKS[OVwx2Zx5Z]5jxxaZYx]f\n" +
+            "I3}}C33nn5yxyjututufF{Fu5t7FCItexyu|}3Iu[a2Sw]jj5ZZol3}{}{f1tnn1x5quuZwuwfI884ak4U5Y[LTv)JJvLszz//cTVd969Pwkq]y]ajoTTz//?JC1n2Zu{|7J(((e3i)|?}ZEjt3Zalua2OAbHNMWNMDW8kRAVpVUKO8Xbb6XKUdaZ5n(oa1xjZaeYjY1\n" +
+            "Cff1t[nYSk6qy5txfC13ll31C{|{ol(){1[jaa]Z[tu5ZZxxZYYZounu[o[eY[nqjoot]w1h91ntR8K4eyajo7((||F|vTLzz//z/*{pPP2wSqqwajYcc*/T(Il5hae}F7vT)Ff{{<fzlSatfieZJ3CY2hhwdXD00ghNN8A$NDMWNMRXmnxUOmmYFFxzuZfZ]texneY5\n" +
+            "1l[eZZZZo5onet}}Iy2YI{l1[3ut{(7fZ}FifeZ5jS69d9h96h6w]Z3C||J{[xuqunY]aj9Vnt52wwqS2]yx[3C}fff{|()vs//z//*r4pk2]2w2aj5]zsvi3[x4wYt{(7J7fCi)vJ([]ao?Fet(CZot[2S]6A8#$XkGW0XHR$QWgRPk1bP4ZeuuIL}|3[|1t|3YIteZ\n" +
+            "1131t[[[[uuut[[u{iI3[xEY3{flffIiJ7iZY1}}ut55ja2yyajxeeYxjxYPxotulyw]YpdSitYSkPkwS2ayuCItt1tICi|J)Lszzz?z9V9wwwS]jY]uv7{3uYedaZ}|(||31C|=c/nxZ{JF15nCi[tnouxwpOUXXb]2#0WKRWQB6pHqAAUbjYt9l}iiCn{i(iCC33ot\n" +
+            "ZYYxxYjxjj5nu1I3xonfCiiI1Z2aeF{II1uuCf13eaSqwqqS]Yuf}C(JJi|[5eZe]PuwdOq2Ct52kP6kwS]]5Cu5555[1fCF|J)L?z?TT4Vh2kwSo|}sJFleeun9yuC77JIiJ7*LTY]t{T[IY55a6I3auna4GbUbp49VA0WPD$]YYZVGXAkp462u{7J7f13f3I3fuutC\n" +
+            "i{I333l3ltltueul3[xyYoYoFi{{f3]Y{fluZlZ5oxjxYxZe[3C{F7|}C35ne31]w1PpO2wV31YSkPkPkSS2xox2E2Ex5eu1I{F(Jvv)7S(]a>_`szicF|{|v>+/?*+z)t{Cz(s}aZ[TJluvyqh49f3e[]d2kObpdOVGUHMhmqwU$mmmHyKw2qA8(z|}FJCi{}1uoZtn\n" +
+            "2SkqPkqqq6kqE]yZ1wo|i[Yy5ZZZf7||C5kSZutexxjyajjx5olttffI{tZnuy65wkphawpYtlYS6hhhkwSE2a6Pk6PS]yYZeu3Ci|(|va?aqI' 'T(J(||FT,<!zisv*vlJJ*ujn{!{t|)T5SPVh1[jS6]E]dGUAKKAXXAdj3mD8HXGdP]]PkdmP)FI()737Cf|13(C\n" +
+            "13I331t3tenoZ5Zyx1C}wSu{fuY5oet}i{}3u5khdd999wS5n}f}C{}I[e3a2q1k9VPaken1ulYS6hh6qkhU6wU$49A#qhpk2jy]5lZ2qq4yZei!>7i373nI(^+cLvr*JC1f*Ywl3c11?|vonjwd43a2xqE3xAAXHm8HmXU6amDDKU4]Vq5]4d2Xj*|}7L(Js|C{fI}F\n" +
+            "ZZ5xayaa2yaY[t}I}1l[uIi}3waI7CeeoYYYe31[nZYZoZZnttneYYut3yqq1wkG4q2q[}2It[Y2Ph96k9.X]A_R M H_RaH=ShO9kc6-a6HZjL[[Y qf.STf>cz|J?sz73cZEo}+1I!|(5lu5]6Vln24264KmH8D8D#R8K4]bAAKU6O[wyOG6]xX2*|3vJ7{{CCFiC1\n" +
+            "eoe[Ze[[lt3CC}CI}t{I1}ueoe3||xn7{nSaESwwEwESEaYe1CiuZnFxPS1whOpPwqtZekI3Ie52k69`dd'4:K`DX&,b>mjA`PO{Fhqq'E<`h[/xen`1F`= {r>;!<+?L{s[ati+13LF}iIxtoaqhSIaGVOK8DHD$#D##Dm456k9KmKKEdyOKVa2XRvC3JJ||{}iC}{C\n" +
+            "YoZe[Z[ex5nonZunn[nZ1|{Ilt31[f|I6wyZ5Z5x22qSSyj5Zt1fIokwnw9pppwaquj]oCfI15Y2k69Vh6f`:8-r`H`?`G``dSh2S6-=!tyYyYs]u1-`-`[,i=!L)z??fsjxoI!Yt*|FivnluZaq94Z9UOd8DD8$$$$$##865]SkUAOyOwj9XmKUSqYT}I7J|I(ICvIC\n" +
+            "9Pk6kE2E2xYulf}C1u133tnYet{i}iIZZxZoe5xE9VI1{}1{Yd9y[jShhbbVw2]xYZ6|}3itlYy]q666PkkP6dG$OPSSSq6kwESwEw22xZZn5uu7i7LLICF7TTL|1|J(L[21ustezFI17FanZx]kVb5KAbA8#D#$$B$$$#RmY9X$2VtGbaaamm80mMMi7IFJ}7}||3i}\n" +
+            "It131ft311tt1uuY2q52jI}11131o{|1ul1ul1fCICxY6d9d99hhOpAU49qS]4tx]e{f1l{C3oy2qP6P6kqk64p862ajaa]EEEE2EESay5e[n[:``iC!n[3iJr7I7*vJn2luFIl/T[1[}3n5yEwdG8AhBmmRD$BB$$$B$$DRqpDD45hheY9KUB00$NBRvvI|(FJ|F(fi\n" +
+            "22]yyxx5e[[f3f}iIII1e]q]y[i{31eYeffiCtkyVV4VppOObAKXbG4d2yShE5lq3C|3tut}fty2qkPPPkk69OOBk2ayajja]]22S]]]Ey5eZeL` 'IkEl)1)<++,'|n2ll(1IL7tuue5fYa2w6p8Nw]dR$R#$B$$BB$$$$8pSXXRSl{iqqBg00#R0BB})Ci7|(7(i}}\n" +
+            "]y2xayyESy]xa]xYYYjZ{FIeeZj]y3}33II2VG4hh6dOVUGGbppdqw2whd9nYjq{I{1Cul}t}ux]SqqkPkPhVOKUwaxYnul[Zxyaa]aaaEaj55[_ -YxZe3z>^>,.<Zan3753)Tui[[5jf5Ek6dKMWVkE408$88DD$$B$$$8G9ww9OR$RDPoV2m#DB$D#?zJJ(7|}(IC\n" +
+            "kqS]axxYYo[I}FFC3ue1Cuyel{(}1e]ZYaVPhdpG6h9pK69kwwSwkhdpaYYYVt|il}iuoCnfn3e]Swwwkk69bVw5onoYjyxYe[ult[ZYySExYZon` clxCJs:;>`>nxnt{luvvu|{ueZYtjahVm00DE9P0$DD8$D$$BBB$B#UVm88mmmmdhdpmD#8DD8RqvTJ(v|7|({\n" +
+            "xnntl[l1tt}{{}tflYwEut1}}{I5I(5qyVhV4kddq6VhOdd9d4ddwtZqoZdel1tI3{fnZ5eu5[oxEwSwqq6dq]j5xy]Swkqkkhk2]xZeeYw2jZnZe-`F5y5[|<_,xYoI(uiTse(u[55YY1[4d$UpOORBmMD$mDB##$B$BB$DAh9OUKUKHOddVAR8mR8RheF7vviiCIfi\n" +
+            "oZ5[[u[oYe3tuun5enelte[[[l3(7I2kVGpAGOOOOGVPGbmUp9Zww[ewO5eu}1nttu1Zxyt5jYnZ2SESwqh4pwaxYjy]Swqqqqkk6d4S]j2w]5Zxjr`,Zxvo}(=5Yat{[Jvvt33e5xyYYt56ApVVwOH#$#DD###R##$B$$B$K6ihbbhObUOVbpX88DRm3e5C{||}Iuf1\n" +
+            "xx[uuf1t1i{}C{iC}t31uSuIxAKKKXXXHmXXKKKKAOOhXbdVG]wVdS2YYY5[t55YtnuYajuYyjyyZ22ESShGkqSy5nu[Z5Yxy]]2E2SwPd4qSyxx51'^*?/s/>YZj3JxLi(e|}teCI5eyYYyVUUUXH8D#R#8BB#$0MMgBB$$m6k9mUOUAHbpOKbXmD8mu]olrT[L}7(f\n" +
+            "xx2]S2wqwwyajenZx5uICIlHm88RDRDRD88888888HmmHXAdOhO922]2ayxYeoe5eY5y]jeja]aZ5x]22q2]xyyaaZu1lllu[eo5Z55Yxx]2q]eltl3r_;<Lf]j[{{[vfJ}uFt1Iu5xltexxx8HAXmD#R#8RggNXRORNg$B$8694RbbUKXXdpAAAUmH6P[[JiF}|F(uC\n" +
+            "dhEye11tZZ2qq69hP2ouewm88D$#$##$#DDRDR88R888888mAHK4w]]a2]ayxZaejy5]S2Zy]]]jYnnexexZoeZxxw]Z[l11tu[eeeoZZYYySuCt5I(J'_!/E21Ctos}itl{3lt31yy[nZ5ZYEdA8DD$$RH$ggWGOKOH0BgBRUVpXKObKXGAGV6p4mG9V]n|LL|535au\n";
   }
 
   private static String getDefaultMkAscii() {
@@ -443,6 +592,212 @@ public class FlamesServiceSpec {
             "_,,__,,^,:--......```````,--:<,```                                                                                `__::_:__,,,_-                `TfjwV\n" +
             ",,,,::::_-...````````    -v=^_-                                                                       ```        .7L!;^,,,^^^,,,,'              `J1e]h\n" +
             "_,,_'':--```   `````````:-                                                                                       >ZI13ItI{ivzc+>=,=>`            .?yyw\n";
+  }
+
+  private static String getInvertedDefaultMkAscii() {
+    return "33ICftnt3n5nlu1teyY7|aK8pYxqSj5ooZ]qEYxYxYxY5YYx5ZYYZZ5YxjkH$$g0MMWQQWW0BBg0MWNBBBB$$0Q%@%B8#DmK4hVqd$Q0VhDWMH9hKg0$AkakXBUv<7#Q&%N$XKmXXO66hpm0WWQQQQQQQQQNM00gggB$g0$Rg0mq1noul1tue(v1nY225u}fny]kGmDD\n" +
+            "ff{C}I1tC}n[Clya]]j3TTukGqxyyYZZ5xSkSxxY555yY5YY5YY55555o5kmBBBgNNWWM0NNM0g0WN0BBBB$B0Q%&%BR#D8XVhwYljKgKb$NN8VdAgMDKkYPmgm2Zm%%%%QMB8mmXVww9G80WWQQQQQQQQQN0ggBBBB$$8XA#Mc   'ZCsFT.   `'<Z]Zl3lZ]6GAKA\n" +
+            "(|((i{C}fCnn{iton[en(zJIyy5Zoe5552qhSjZZZxZo55ZZZZ5nnneoZ5wX$#BB0M$KGK8B0gNNWNMBB$$$$0Q%@%BDDRmHpkKgV3IAM880MHpVA$g8OqYSHg8OK%%&%%%QWMMMMmhw4AD0WWWQQQQQWWWNgB$##$$D#$Rm$Qv' `=5fL/*     ` <YSjyjxx6bKXH\n" +
+            "J(|Fi}}}33It}3u1331eC//{ufvieZoeo]P9ayoeYZZ55ZoeoYZenneen5PX###BNWN$8R#BNNNMWNMB$$$$$0Q%&%BR8mmX44X0NX9p8Km0MmOOK$$XGVa2ABRpOQ%&&&%QNNWWNRUOGAD0NWWQQQQWWWWNgBB$$BBRD##$RGV6y]jo}|7Ji;:''->3Y5S2Sk9OAKmm\n" +
+            "F|ii{}C}31I33I}F(}}}Fzc(3}iIeneeo]PPSj55YZZ555oneoZeen[u[owX##$B0WQQWWN000gBNNg$#$$$$0Q%&Q$8mXXmGV8gWN##HA8gMHpbRB#XpV64m$8hGQ%&&&%QNNWWN$8HXmDgNWWWQQQWWWWMg$$$$$RDDD#$8AOO9w2yetIuIJvT1ywk]S4GUbOOKKXX\n" +
+            "iii||{Cii{f1ne1F{}}}Lr+?fi|ZE5nnoyE22y555e[eZZZoeZZZol[[nowHDD$B0WWWMMgggMgg0MgB#$B$$0Q&&Q$R8HHXpG99RWWXk5SqVhaqbKDXUAHR##HGK%&&&&%QNNNWM#HAKH$gNNWQQWWNNNNMgBBBB$$##BMWM#DmOdhPhS]Sw]j5[oEOUXmHHApGAX#D\n" +
+            "iFFi{{{}ft1[tl1[5]ae1s+>?C1Yx5enea2a5ZoeoZZneZZZeoeo5ll[neSmDR$BMWNMDHKH##$g0N0$#$$$#0Q&%W$RRmmHGGPh9qC7CL?(jhuifi[|J[kX8Dmm$%&&&&%QNNNN0#mAUXBgMWWQQWNNNWN0gBB$$$$DR$0NN0$mKAAUOO6k4d9]y]hm8RRRmbpUUKDg\n" +
+            "iiiC3u5ZnYwhpAK8HUOVxfsc<sIIFI5a2ajoZZZZn[unnnen[[ee[l[[u[qmD8D$gNW0he[5PKBNNWMB$$$$DgQ&&W#RR8HOPUUS11Zo6dhw]5]n{r!|}jBQNM$RDgW%&&%%QWWN0#8XK8$0MNWWWWWNNNN0ggggBB$#DBMWNgBD$gBBDXp4pXHUA8##$B$8KAAKKmRB\n" +
+            "EwqdOO4j1u]pDB$XGBB$XEfJ*+sLsia]yZn[eoeeeen[[oe[[[[l1utttlwm#RR#0NWWBDDX9pBN0gB$D#RR#gW&W0mKX8$$GPltaj]OG]Y[Fcrz(x0%%%%&&&%QM#UOKNQQQQWWNDHAAm$0MNWWWWWWNNN0BBBBBB#DRBMWNM$##$B0gDOOK##DD$B0MMg#mKKXXm8D\n" +
+            "m$D8mpj3CiC[dHd35dhYiFoIT+L{v|5]Zen[neleZnu[nunonnlu[u131nkR$D#B0N00B#0NNWWmU8$#RD$$DgNDXDgDOVVpGdRXH8Ayaq]dR$K9mQ&&&&&&&&&&&%N0RApKBMWWNDKXK8$0MNWWWWWNNMN0gBBBBB$#$gWQW#R8#BB$#ggg#D888DRR#WNN$XmAKRB0\n" +
+            "XMgHdZI3}|I1[ySxno5[{L)7T<>{f*{j5n[uuu[l[ul[lt[tlnllt1tu1[S8$DDB0WN0BgBBgMMDHDg#D$$RU$$DD#DDDXbGA#gRp9kAKU0W%%%Q&@&&&&&&&&&@@@%Wgg0DKDWQNRRAU8$0MNWWWWWNNMM0gBBBBB$R#0QW#DURMQQQMM00NNMNN$XGK#NNg8mmm$0W\n" +
+            "xySEwe33ll33i(ItI{{F(vTLs>,*3sLu5euu[[uulttlltttl3t[tttu3lSR#RD$0WNNg$HAX#g#R0gBB$UbmBg8#BB$D88$0ggRDOB#N%QMQ&&%&&&&&&&&&&&&&&&%%QQWgRXgMNmKm8Bg0MNWWWWNWNMggBBB$$$DD#DgHGK$W&&%WD88B%&&%0mOVXRB$RRRRD$#\n" +
+            "[nZZlC}3ul3fCJ|u})v((|||7z>=,_<(x[31tllllt1I111I31ttt33I1uq8#RD$0WNNgB#DD$$$0NggAap8Rgggg0$DRmmR0000N%%%&&&%&&&&&&&&&&&&&&&&&&&%QQQWNN$8RM0RmDg0Bg0NWNMM0WNgBBBBBB$$D8m8mKR0%&&&W#pp$%&&%08bUOOAXKHRDDUp\n" +
+            "ii}F||C1u[}i|JL3y[iJ(}C}f|/=^<;/ou11tullulltt1311II3133I3lE8#RD$0WWNgBRRRRDRN0XawUR#R0$0MmXUmgWW%%%%%&&&&&&&&&&&&&&&&&&&&&&&&&&&%QWWWWNN$8BNMM0M00MNNN00MW0g$$BB$$$DmXKHU80Q&&&&NRbAB%%%%QgAOOGUK8RR8mUp\n" +
+            "((|(7{un[u1I[nZnZP2[tu1{}Cv+^;!zttt111t1fI3II333I33II}f3IuSRD8R$0WNN0gDRDDgMMeieyAGb8NW08URBMWQ%%&&&&&&&&&%&&&&&&&&&&&&&&&&&&&&&QQQQ%WNN8O80NNN000NNNN00NWMBBBB$BBgDHAGX#N%&&&&&MmOKg%%%%%QBHpGKXXHDRHpp\n" +
+            "F||{tYx]pUhqhP6day9kxZ[{({Fz<!){f3IfI313333I313If}I1333II3EX8m8D0WN0gBR8R$0miFCnwGGgNN#mVA$NNNQ%%&&&&&&&&&&&&&&&&&&&&&&&&&&&@&&&%WNgBRggRX8$MNWWNMNWWN00MWM$$$$BBgg#XUARM%&&&&&&0mpX0&&%%&%%N8KUKmXDDHVG\n" +
+            "fItt5ye[Y[tu5[IIlfoPwx[I||is/L{3f}3IfI133f33III}}Cf33II}ItEAmm8DgNWM0BKUmDGJ{CIn2O$M$HmmHH0N0MQW%%&&&&&&&&&%%&&&&&&&&&&&&&&&&&&%%WMBRmRDD8#MMNQQWWWWWN0MMWM$$$BBBBgDmKA#N%%&&&&&g8Om0&&%%&%&W#XKA8RDDKpU\n" +
+            "3tlnyZFF15nuyj1FioZexaZt|7vL?)If{C}II31IIff3IffII311113IIuwm#RRDB0WWNMB$BSJu|7oG0MXAOHm9O#8m$NNW%Q%%&&&&&&&%%%&&&&&@&&&&&%W%%%%QQNg$8RDg$$0MMW%QQNWWWN00MW0$$BBBBBBBRAUDN%%&&&&&BAGmN&&%%%&&QDUbKmRRDAOb\n" +
+            "tuuZYlI1Z]qdXO6]u3x]Z[YuiJ)TJC[[eno55e5oeeeeeZZZeeee5xo55xh8RRRRD0WQg0NWaT{z)5ABAPGVG8GKDAmRBDBWQWWQQ%QQQQ%%%%%%&&&%%%&&%%%QWWQWNBBDDBg0QN%QQ%%%QQQQWN00NW0$$BBBBB$$RXbRM%%%&&&&BUp8W&&%%%&&WRbUKK8RRAVA\n" +
+            "tn[nYj2wdXD#mm#$DDHHbqY1i(vLia9VOVppOVVpVpbGOUKbAAAUGOVOGUmRHmmR$0NQMggh(fi)CU6aVV6AmOH0mm#D8DD$A8D0B0NWQQQQQ%QQ%%WQQQ%%QWMMgg0Ng8X#$DMQ%WQQ%%%Q%%WWWMNMNNg$$$$$BBB#RKK#Q%%&&&%&$GG8W&&&%%&&W#XAXmRRDKVK\n" +
+            "uluekbbX8mAO4qyZnulte]SYC(7TvyD$mXUbXKUbbUAAAKAKKAXKXXHXKKHHKmmR$0MMg#yitlCf4y5bpa8g$gMgggDR#RRR$$mB8#B0gMMQQQWWWQQWgMQQWBBgBRRRR##$BBW%%&%&&&&%&&QWWWNWWMM###$BBgB#Rmm$WW%%&&%Q$bO8N&&&%%&@0XbGXRRRDKGU\n" +
+            "o[luad]1I15EkhhS25ZoeZ5eIii7, -^z(lOg$HKHm#Bg$RDD#DRRmHKKXmKXH88#gMM02F3oItO22XV4NN$WQWQgg0$#DDDBMBDDD#R#$$MMNMgBMN0gBB0WgA8B#DmHDMWNWWQ%&&&&&&&&&%QWWNWQW0#DD#$BBgBDHm$NWQQ%&&Q#Xb8M%%WQ%&Q#AVUmDRRRKGU\n" +
+            "n[u5jZltlZYYol13lo5Zo[f}I{|)=       .rFpB8GI>iRWg$B$D8XKHmmAbAH8DBNWh}nYYaHUAR8RWN0Q%%QQMBBgBB$#R8R$$XG8D8DRmD888ggRRgg#XBMgDMNQNNQ%%%%%&&&&&&&&&%%&%WNWNgB##DD#$BgB8XR$NQQ%&%&%$KADN&%QQ%&%BXbHRDDDDXOm\n" +
+            "u[nY5e[uuuICFFF||iCletfI1{7Jr.   `.` ``.-=<vlOB$D8DD0BB$$$#XUUAH#0NOejkEpB0XmDg%QQ%%%%%BAbmmARmm9kOB#G5AAKmROUOKRKBB#gB$BH0%QQ%%%&&&&&&&&&&&&&&&&Q%&&QMNNgB####$BgBDHAm$NQ%&&&&%$bADN&&%%%&%g8UX8RDDDXVD\n" +
+            "lneZYYn[[l}C}tZZeZyyYt[nIiJv<-''',><>+!!*zLs{2]hdGXD0N0gB$DUGbUX8BXexAOXgNBggM%QQQQQWN8kdpPhOGpKntpKpd1EUGbmbV]5GX##B0g#NWW%%%&&&&&&&&&&&&&&&&&&&%%%%%NNMgB$###$BgB#XOABWQ%&&&&QgKAgQ&&%%&&%gXKH8R#DDXp8\n" +
+            "1lZy]SEjYxYYxEkkqk6qE]o[e(!>*!><<!c/?v7F3CC(J|{3xu,-'>z{EOKRmXAmB$k5GAUX0D0MMNQQQQQQ0dZat{Y2jqqS((VUO5[{eSEXbE6w5VmR#g0NQ%%&%%&&&&&&&&&&&&&&&&&&&&%Q&%N000g$$D#$BgB8UpHBW%%&&%&%0KA0%&&%%&&&gXKmR$#DDXX$\n" +
+            "3oYa2E]Swqqk9p9hhh96PwS]Yc=/L*!L}|}11z>-_LekqxI|Io^`      .,Lq$$RHYSR8Rg00NNNWQ%%QNg911(vitftYY(!*kUAY[C7xZ2bkkUaZkdK#gNWQQ%&&&&&&&&&&&&&&&&&&&&&&%Q&%NM00B$##$$BgB8AGmBW%&&&%&%gXK0%&&%%&&&gXXR#$$$DXX$\n" +
+            "I1eZxy]2Eqh94dd9h99d6waj/^zLz?7I[>.:=''-..`:k]|(oU3^          .>Y66KBD$MNNWQ%%%WWMXEut1{J(Iluic>>=?yh6Z(zJ55e46]O6n5xSU0WQQ%%%&&&&&&&&&&&&&&&&&&&&%%%QNg0ggDDD#$$B$DHU8gQ%&&&&&&gXKg%&&%%&%%gXmDD#$BDAmg\n" +
+            "iCl5Yy]ESq69444499Pwyx5(+?L*zv{ls''_<+><!!<,3Euljdv;.````..`    =k#D$DNQMWQ%%&WDphynn5qpVqan7c++<<+c+czvc<+7CJ)L(]9of13e9$MNWQ%&&&&&&&&&&&&&&&&&&&%%%QMg0gBDDD#$$##DmKRgQ&&&&&&%#U80&&&%%&&%gHmRR$BDRmR0\n" +
+            "*|iC1nZ5YYx2SwSqwyYZo[{sTL?zLJ3o!rTvs/c+!rccc*z!<l61*nJ,-..-..``e8UggBWgMQ%%Q%8Y2dnfF7{IY]wwEZ|/*!<!+<>><+<!s(fto2hkkd9VPaxkmQ%&&&&&&&&&&&&%%%&&&&%%%QNM0gB$##$B$BB#mKD0%%&&&&%%$HXN&&&%%&%%g8X8DBgD8U80\n" +
+            "+c7fCiI1tI1[YYxjx5t{C|zs|??TJFiLss**c*/z*?zsLTLLTvL(3vzr-..-.. !kD$$RgQQQ%%%Q$IeV6wEay[}7JCujy[|s*!r+<<<!zLTFft[55[l}TLL){5Yu5HWW%%&%%&&&&%Q&&%%&&%%%QNM0gB$##$BBB$#HKDM%&&&&&%%#XmN&&&%%&&%gKHR#BB#RA80\n" +
+            "*!!|[fF||{C}1l11IJLJ(c/sz/zs)Tz**/?iisTzzL>_=uSe3nwps'..-----`.{mg$##NWQQQWWQPiIq9hbUPyuCLL/s}jois**r!!r*Tv(ifIf}Fi}}|((7}u2y}Fw#BgM%&&&&&&&&%%Q%QQQQWNg0Mg$$$$$$B#8K8$gQ%&&&&%WDbXN&&@&%%%%BAXRBBB$8GXM\n" +
+            "=r+<7Zt)v7||Fi|JvvLr;*s/ccc*TL**sFFs_`-_,:` `LpY||]$('----'-.`'ug##gBgQQQQQNN17|FewHRm80pS53|(7oZJ*c!!c*?|}}{|7JL?TF35ajZ55y]e{|[6mg%&&&&&&&&%%QQQWWWNMgg0B##$$BBB$DHhnwU8gW%&%QRUmN%%&%Qm4GX88DBgBDmAmN\n" +
+            "/c<ccst}TLJ))JJJTc>cssz/*c/?sc?L7T_`  .:,,-.-_xh1IyRY:----'-.`/w#$$$$0WWWQ%%4J7z?)3]wod$8Rqu1uTTn{c<<<czFuIF777(7i(({126kwww2t{(F}28W%&&&&&&&%%QQWNNWW0#RBBBRRXmD$DDmHA4hP4HMQ%08bKMQ&&0d1(CyUm#Bg0$8K8M\n" +
+            "6]|,''-'=/?zzLLL+r?7FJsc//crczvJ(+!r/cr!!==;<zr<r>fdp<..----.'iKg8R000NNNW%%y+;<+rr)x]to5f?cLFLcJvc++<*JJvLFu5jdUYVBXA4w22ayn{((|C}ZM%Q%%%%QQQ%QWNNNgNg##0B]6E6wwG88#BKt?Feo[HW0HOHMWgVaIJvina4KD00$mK80\n" +
+            "|i{iJ<,---^!svL/?c*/>;*/*crc*zLTTz?vv)vTz/cssLTLLT3Yqx;...---'1R#DBBNWNNWW%%|:;<++*zL)JJJzc+<>cLTz+=>!?Tz!>css{2X$D6Y6HOnfivLLTJ(}1aMW%%%%%%%%%QWNMMg00DBBB#AIL}2jT+s(Y][C*cczED8bmDGxI(T//LF3nSGDBDKORM\n" +
+            "7z>*3I(+_''^L7L/>rr>*JLz/**/zz?sTvTL)C(vL/L(|iCfII}(vv'.-----,YDmB$gNQNN0gQWT_;+rrccc!//**r!+cLvLc+=;!/s/r<<!zzT|flInZY3vz/*/sv7|}uhNN%%%%%&&%%QWWWg0NM###$BgUj|cc+r+!*TC3{L/*/YAH4dx3{(TzzL(|}3YOR8KARN\n" +
+            "_::,,!JI7crcrcc+=>>?ssLTLss?/LsLvJ({Cs>==vI1}FvsLTi}3[,`.----<wRHB$BW%Mg$0%Rs<!c*r!!!!!++++*/T)vz!;;+czzzc++rr!rz?s/****!++r*s)(i3ZUQW%%%%%%%%QWWNM0NNgR$##D$B$H]u|Lc<;>+cTv)/rziUVdS5tIu5ellt5]9KDRXORN\n" +
+            ",___'_>/*z?/cc!^_!vvTszvJszzzsLvFfz++?)|1nnoZ555Zu}lGd>`.--'-/4#R#80QQ0B$M%X?*zLss*cr+++++rzT7L/c<>>+czzz*r++!***cccc!+!!rrc/T(ifewDWQQQQQ%%%QQNN0M0ggggB####$$BBg$63T*+>>!czL/!r75ZtF{J(|F|(I[5w9UAKU$W\n" +
+            ",,,,:'^!*<=>sJ=_LTTTTvTL??z/?TiIjtsF[5aa]wGKVOwe6Z{}E8/`-----+kXA$8D0N#XDN%9czTJvszz*c+++!*ziL^!+>=<r*ss/*c+>>;;><<<<<<+!r/sL7{I154BWWQ%%%%%%%%WNg$DD$D8#D#$D#$$Bg#HXOeJz*<>+!*zz!zCFTLLsLT)JJ|ifIlyhAgW\n" +
+            "_:_____!z,_^<,;L)v)vvv/ccrccsFtedGdbAXAUXDXw(^.r4aCiER7------+w$$mHM00HbRM%X/T7|(7vs*crr!r*/(J/!<^^!/sT)vs!>>>>;;;>>+!rc*?sTJFItoyGgWNQ%%%%%%%%%0XV969ppdkeyVX8##B#8UXDHyfFvc!c)(?J}7TJT+=+/J|iI1u[o2OB%\n" +
+            "::'':_'^r<^=,>z///ss?*rcrccz(tkUOKUGbHbj(<-`.''=kh3JeHZ_-.---:e8AKmgR8O9HRWBJvF{{i||L//*!+*|It}?/zTv)TszLLc+++<<<<+r*/sLTTJ|iC1tnyU0NMQ%%%%%%%%Q00Dmh5lfr<>>!!!!T1a4XR$00w((JLsv|vF1{7)?<=;/({1uZ2SqdA0&\n" +
+            ":::_::=vIc-'>!*sLLszcrrrr/){twUXKAUHh|-.`...-'-:1Au73Od=.---.`I$AmH8DAOdU80Q}){}{{{(T?zzr+zISd4yn[yVKO]t|cccrrcc*//??svJJ(|i{{t[yq8N0NQQ%%%%%%%N0Q0Wp1oe}vsc+!+><!rrc)5G$d|T)Lszv)fEY1f7LLJ|fexxjhOKDBW&\n" +
+            "____,<)I!'_^*TLs?//c**c*zJ}[6AUpd9dJ-`.....''..'JUZ|}4X+.-.-- !P8mXRbK9ddK#Q]Fi{i{F(vvs/**c***JlI|J//?L)*<!rrc*/z?sTvv)JJ7(|F}t5wK0WBBQ%%%%%&&%N0MgV!<s}eqV9Y7*c+>><+!r*F4q})TL?v{l2]yan31[Za]]]wGD0WQ&&\n" +
+            "____=*c,-'>T)/zzzz/**?L)F3YOXOa]91_-.....-'-..':vGjiiER/.-':_.'eR8AUKmd9GKXNRuFFFiiF(TLTsz//**+<>;>><+rr!<!c*//zsLvvJJ777(||Ff[yhb0MgNQQ%%%%&&%WM0MDu|{7sc(]XRGx{7?++!!?v(|C|LssvC[kaZnn[ul[Yqdd4URNQ%&&\n" +
+            "_:__,'-';zzrc*/zz?ssv)J}Z6AUVdai,.``.....----.''!hEC|xR)-.-_:--,yB0$#DGG#$Ug#5fi|(|F|Jv)vTsz//<==;;<+!rrr!c/zzssT)J)vJJ)v7|{tuZX0M0gBMWQQ%%%&%%QWNWQ#KObO9En}eA#DU95}src*/LJJ7vLv{e9Z55Ye[unZjq4GKRNQQQ&\n" +
+            "_:^:-^zz*!!rr*c*/?L)|}1o6AUKVi: ``````````` ``.`:ydti58i-.-'_'-'=aRmB$mm8$BBNP1CFFFF|7777sJ1jax}?JFvzc!rc***zsLvv)JJJJJ(((CIuZ6WWNM0gg0NW%%%&QQQ%&%QNBUbAXKUOw[2H#Hp[Fv/r*v77vLssLF6]xaq2YZZjw4GbKDNQ%&&\n" +
+            ":''+J*!<ccrr!rc/zsL7i3xPX8hs- ``````    .```...--CpZF[Xt_':_^+!;,;JG%08Um#MgWBe{iiF|77(|ix9pU9qhp49VOxv*??sszsvJ(7JJJJ7|FC3el20W0g##B00NQ%%%&%QQ%MAXmUAK9ww6OUU9qdRm4u{JLzsLJv/c!/LnAbVd9wa]hOAmDgWQQ%&Q\n" +
+            "'_)?c!r*c!!!!?vv7(i3npdI*^   ````````   `````.-.-?bj{tG5_'_,_=?(*c=`^Ll2RgKm0Wp}({|JvLviSbm8D8mDRmRRmXUx(TTTLTvvv)J7(7((Cf3lYDMggR$0DMMN%%%%%%QW#dVhknv**r++<>+<*)lwXD4C7Tz*/z///zzIdVpwP6PP9pK8#MQQ%%&Q\n" +
+            "LvLz*c**/?LJ|{I[oywdJ,-.--   ``````````` `````---*42|Ipy,:,,_:rJLc>-.-_*nb8mmUnof{C7vv)TJaAk3}[o2wx2E48mp3)TLTTTTTT)J7(FCI1eOMg$$ggBWNWQ%&&&%%QQ%Qgw1I|7)L?*++*/zz//TI)/)v*+>cc/TJ7f2axZnZ]SwhVGm0Q%%&&&\n" +
+            "T/**c*zLsT7(fu5dp[cr+:..--` ``````````````````--->6q{IO2^',=^,^*/*>'-'._+TjbO45Iy}i|JTssfa51iLsv()vvTCxjJ!?LTLTvJ)J7777{}Iod0g#gg$$$g0NQQ%&%%%%QQWNNg$$DRA65Ii7)vs*!c****c!+!r**/7II[aZt[ojaySdA$gQ%%&&%\n" +
+            "**cc*/zzT)7i[6Ou+++!/='---.   ```````...---...---=]6f3Ga^'_==^,=/?<'-':_,,'.-:,_(x1f77Jv7[Ye[enItlnZw]lLc+!/sT)J(77J7|iftjp#Bg0gBBB$0NWWQQ%%%QWggB#B00B#DR8$$mPYu7s?z?L?*ccccr*sTCI}lSyYYxSSjwOA$W%%%&&%\n" +
+            "*ccc**/sv(uSUY*+!+!!*+'--.` `...````       ``.---,n413dS=-:_,^,_rT+---:__'------_)ifF|||77YwalC{i1[EnJzz/z?Tv)J(|)))JF}l]UggggB$B0M0MMMWWQQWWNggB00M0M00gBBBB0HjlYo3vs///*!+czsv(|i}35Zt}e5nuoywUBWQQQWM\n" +
+            "cc**/?Tv{xbkJ/*c!!cc*c_'-.` ``.......````....----_{2(i5y!_,,,,^=<s+.-':_'---..`+)vJT(Fi{|J7(tj]]ye{JTLsssLvJ7(|()J77F}[kRgMNWM0$B00MMgg0WQQ%%&%%%QQQQQQQQWWNNNWU5t[qq3v?zz/**sJJ7(||}jkExYyEk94GX#g00000\n" +
+            "**/?LJ|tdq|zvv?c+<!++*,--.` ````.```````.....-'''+a]ox9dc_^,,_,=/7r--'''-'''-^|l/J}?/v||iJTTJ777((7)vvvvvvvJ7((7J7|i}o4HmR$M0NNWWNMM0gBMWWQ%%%%%&%%%%%%%%%%%Q%%RUUAXGw17L?z?T7(77(|iCwWWWNNMMg0000MMM00M\n" +
+            "*zzT(fyVnzL/zs/*r+>,,*='--` `....`.```..````.''''rG025OG*',^^_-..-..:,;=^=>+r<Fvz(]L/sTTJvL/ccc*?sLLTvTv)))J77vv)|ilSGbKUqAW%Q%%W00g0g$gNQ%QQQQ%%%%%%%QQ%%%%%%&NUKHmHde{)))v)JJJ({|F{lgQ%&&%%%%%%&&&&&&&\n" +
+            "?sJitEd}zzJ7vLLc>,__'!>'--``...........````````` `'^,=;^-....'_,=>==>+<>><++r>zLFIhPv?sLLLs/cr+++!c//?ssTv)))v)J|IxdbGUKKhu)12bW%NM0g$$BW%%Q%%%&&%%%%%%%%%%QQQ%%8GXKXUj|sz/zzsTv7F{F(CKQQ%%QQ%%&&&&&&&&&\n" +
+            "T7{t6]L/Ts*!+<>=_:::,+=--.``....-----''':_,,,_:::'---....-':,=;>>>=^,,===>++<<^T215KOfTT)T?/cc!!!rcc**?zT7(|((Ct2pAUKAGK8pyly3?<+iyV0NggWQQ%%%%%%%%%%%%%%%%&%%%%QApAKX2fvs/*/?Lv77{C}ixW%%%QQWQ%%%&&&&&&\n" +
+            "i}Z6tz!c*!+!<^_:_^<,,^^'----''':_^=;;><>>>>>>>>>;^^,_:'---....-'_^,_'',^=;<++s^rL7|[GV3JFFJvLs??zzz?sLvJ|{3[xwVbGbbUb4VHOqw3qp9wYn|/>c7]0QQNQ%%%%QQQ%%%%%%%%%%%%%QXpKHp5i)?/zsLT7(|iCi1KQQ%%%%%%%%&&&&&&\n" +
+            "I]or+!c*r>=^_:__'__::__,^^^^=><++r!rccrrrrrrcccccrr!r<<<>===;;==_:_:'=><+rrrr!v71qeS5]bw[1|F|7)vvv)J7||uYSkpGOGOVGG4P9Op9E2jxEqkqw2yZ17+^!FwgQ%&NNWWWQQQQQQ%QQQQQQQ$GKXkn}7TLLTT)J7|i}C5gQ%%%%%&%&&&%&&&\n" +
+            "6e//zss+;,___=:zdmO1*=!r!rrrrc**/**z//*****c***c*****!c*cc*//zz//*cr<>!r**c*/*c!:rhd6]kPVaZe[lIIIf3tu2OUAbGpVVppp6aoa3Lxqjt3uI||7)Ls?//*>=,_'-/1Vg%%Q@%WWNNNWNNNWWQNHppVYe3FJJvTTvsJ{I{(Yg%Q%%%%&&&%Q%%&\n" +
+            "ic!cz+<^,_::>(h#mDMWN67r////////z**/zz//***/*ccccccc*c*cccccc/z*c//L//zsz/**c*cr)7!Ttx][hAKUppVVp44VGOOVVVVOpVphnCvv7Fu)/;cCJ*<++!rccr!!+>;^,:---'-'^>>+c1UBNWWNWWWW%WKG6x[1FJ)TTv77777ivj0QQ%QQ%%%WQ%%&\n" +
+            "+cc+=__,>3X#8BgB0Q%%QQg3c/z///zz////////*****crcccccr!!cccc*/*crr!rc/?zzz/***ccrc|[aVUnunuVmmHXKbGUUGGpVpOOV9En3)TTrc;T>!1{s/crr!!!!rc<=;;;;<+!!>;>;,____,^__=}KBQQ%NNM#O]l1iJJ)TvTszzLv)vyMWBR$MWQ%%%&&\n" +
+            "c+=_'=J6XGpX0W%%%&&&&&&Ql/?zzzzzz*******ccc**cr**c*c*cczz****!!!rcccss?z///z//*cr!*i}3PHp533jbXHHXUbGUpbOdx3f}(Tsrs{s=v3i?//**ccccc**c!+>==^=>+rr**?zLvTLsLvTzr>=Tk0QQ%NAd]e1})vTL?/**cr*L?7{/-_SQ%%%%&&\n" +
+            "^__zjmKKRNNBQQ&&&&&&&&%&BF/zzzz/z?zzz///***///*/**/**//**c*/ccrc*///z?z/********ccc/tV6}2GUA6uekOhhXKdP2ZsJ|;+zTCu!sC(?**///////z///***rrc*!!!+<!r?TT(}31lu131F)s/r>J6gQN$Vq5ufIi(Lsz**//zs?J!'{f{R%&&&&\n" +
+            "!uXB#$gNQ%&&&&&&&&&&&&&&%XT*z//zz//z/z/*//*****cc//****//z/********/**ccc*crrcccccccsCPK8E3YOwSb5FCtE!!7<'*z/1},/}Cvrcc**//?zzzz//*crc***ccrrc*/***c/zLv7C[Y5n[u3C|Jsr+tOQRHUV]ZC(T?L/*cc*vs^Jbx=I8Q&&&&\n" +
+            "Q0HHBW%%&&&&&&&&&&&&&&%&&B(*zzzz//c*z///z/*/*c*c*********************ccccccccccrr!cr!*7YVAKKdtYO17iefcz[}73n7)3tJ*!c*cc**/zzzzz/*cccccccr!!!rcccc******/sT7{tojSSwE5f|v*!TjAgmhe3FvL/cc*rssJuS{!n3cG%%%&\n" +
+            "&&&%Qg%&&&&&&&&&&&&&&&%&%W4sz?zz?z//z//z/**********ccc**cc***ccccrrc*crc**rccccr!++!!++cTFo266k9efn]oeZF77*c*c!!+!!!!!c******//*****cccccccccc*rcccc**cc*/zsvCZSVp6you3|)L*cvkm9Yf|vsz/sJZPF//2Vi<jChN%%\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&&%%NyLTL?zz/zz//*//**/****ccccccc**c*ccccccrcccccr!!rrrrr!!!!!!!rrr!!!rc/zz!r!*+!!!!ccccccc*cccrrccrcccc*ccc**cccr!rccrr/*/*rccc***???TFna6kjZeuu[555YtvhVZu(z|lI)zequ}zJqpT>S0NW\n" +
+            "&&&&&&&&&&&&&&&&&&@&&&&%%%%${iJTLsz/z/**/*cc*******ccc*ccccrrrccccccccccrr!!!!rrr!!!!!!!!!!!!rrrr!rrccr!rrrrccccccccrccccrrc*rccc*ccc*ccrrrccrccc*c***cc*///zsT(3xyxwdpVVGGAXD2wqe1Ct|7tt})eeZI7siEHMNQN\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&%%%%QNdi[{7Ts/////*cc*//*c***c*rcccrrrrrcccccccccrrrrrr!rr!!!rrcrr!rcc!++!!+!cccrrrrcrrc*ccrrrccccrc****c**ccccrcccccrrc**c/**/*czz?z/zzzL|uSbXHm8R$NWWQWXA6]oIf(IZtnFy5n[ee17SMWQ\n" +
+            "&&&&&&&&&&&&&&&&&&&&@@&&%%%%R(Cq[F7Tszzzz//*/**c*****ccrr!!rrrrrccccccrrrrrrrr!!ccrrr+!r!rccccr!!!rrrcrrrrrcccccrrrrcc*cc*/***c*r++rrccccrc*cccc/***/////////zzsT(nhUmD0Q%%%%&&WVUEl}(Ft5l7vc*/s)(F|zl0W\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&%&&&&0q*7k2I7)Lss?zz//cc*****ccc!!!!!rrrr!ccrrrrrcc*c!!r!rccrrc*cr!!ccccccrccccrccc*cc**/****c*****//z*c*ccccc******cccc*//z///*//zsz/z/zz?)34N%&&&&&&&&Qg$8K63J?cccccc**sTv77z|R\n" +
+            "&&&&&&&&&&&&&&&&&&&&@@&&&&&&QRIL3OyI7vTs/?z//******ccr!!!!!!r!rccrc***r!rrrccrrrrrrcccccr!!rccrrcrc!*cc*c**/****c********/**z/c**ccccrrrrrcrcc*//**/zzzz/zLs/zz/z/s]N%&&&&&&&&&&%&%Nkl1|)T?/**cc/?Lv)Jz)\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&Wd}I5Xwl{)vssszz/*c*ccccrrrr!rcrrr*!+!r!!r!rrrrcrrrrr**cccccrrrrrrcccrrccc*******/******zz/zzzz/*/cc*ccccc*c*****/z**/zzzz//zzz?zzzzTwQ&&&&&&&&&&&&&&&%Bal1iv?*ccrc**zz))vT\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&R5eYeVXw[|7TTz///***cccccrrrrrrrrrrr!!+++!!rcr!r!rcr!ccrrrccccccccc**ccccccc****///*/zzz?/zzz*////*crccccccccccc******//////szz???/|X%%%&&&&&&&&&&&&&&&QHZf}|vs?*c***/?TTJ)\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&&&&&&WdxqhS6bUk1iJTL?sz******cccrrrccrrrrcrr!!!!!rrr!!!!rcccrrcrrrc**crrr******//*/****////z/////z//////**ccccc****/*c**z//**/z/*///sz??7VQ&%%&&&&&&&&&&&&&&&%NVnIi|v?zc*cc*/?T)v\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&&&&&%RhVAG46GG9a1F(vs?Lsz/**c*crcc*c!!rcc!+r!!!!!!rr!!!!rcc!!!rr*cccccccr***cc**/c****///**/?///****/**cccrccrcc**/*****/***//zzzzsTTLT(VN%%&&&&&&&&&&&&&&&&&&&gk[fi7L?/*//zz/zvJ\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&&%%WaYMRAKbkokGO6Zfi(JvL?zz/cc*cccc**cr!rr!!!rr!!!!r!!rrrc!!!!!!!!!!rrrrrccccccc**/zzz//z/*zz*c*crccccccccccccrrrc*******/*/////??sT))J|9%%%%&&&&&&&&&&&&&&&&&&&&$at3i7)sss/**z?sL\n" +
+            "&&&&&&&&&&&&&&&&&&&&&&%A2z::vbU9wnok64hjt}F7vTL??z/z//***/*ccccrccrrrr!!!!r!rc!rrrrrc!rrr!!!++!rrrrrrrccc*****//***ccrrcccccccccccccrrrc***/**//////z/?sLTJ((5W%%&&&&&&&&&&&&&&&&&&&&&&%Xx1}|JLs?z**//zs\n" +
+            "&&&&&&&&&&&&&&&&&&&%%w!-_,,^,*6mEZZ]6hkxn}{|JTL??zz??zz/z?z//*/c**crcc!!+rrrccccrrcccc**ccccrcccrr!!!!rcccc**c*c***ccc****ccccccccccccc*c*/***///z/?ssLTvJ|CIU%&&&&&&&&&&&&&&&&&&&&&&&&%Wb5I{FJs?zz////z\n" +
+            "&&&&&&&&&&&&&&&&&KZIr,,==^=;>>s]daxjP6Pj5l}F|JTL?ssz?ss/zzz/***c*cr!cr<+!!<++!<<!!!!++!!!!!++!rcrrr**rrc*cccrrrrccccccccrcc**c*******c//**////zzzTsssvv)7if1]W&&&&&&&&&&&&&&&&&&&&&&&&&&&W9e3i7Jvs/*ccc*\n" +
+            "&&&&&&&&&&&&W&0E*:_^=;>;===;+zvFS6y]qqwyZut}|(7)Tszz/LJ|loyqhdpOAbH8DDBgggBDHAmDDRRD8XAGUbpVdddh6kSEjZnIC{F|7JJJLzz/*c!+!!!*/////**/z?ss?z/zzz??zzsTTv)7i33yH%&&&&&&&&&&&&&&&&&&&&&&&&&&&&0ql}(7Tsz*c***\n" +
+            "&&&&&&&&@NSL_>,''_^=;;=;>>>!/7CC}2]55SaxxetIF(}yU8$N%&&&&&&&&&&&&&&%%%%%%%%%&%%&&%%%%%%&&&&&&&&&&&&&@@@&&&&&&@&&&%%&%QQMBDRmG95{T/**/???sLLLLTTTTTTTv)({Iuxqg%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$]I{i(vLs****\n" +
+            "&&Q%%H|/r=`:^^____>><+!!!!!z({|7LfeIi{uZxakHNWQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&&@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&@@@@&&&&&&&&&&&&&&&%%QQgBHqf)LTJJ))J7JT7(|}Iu56V0%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%m53C|7vL/**c\n" +
+            "&&Q4<.^^,_,=!/;,:,>++!!cc*s)7TLv/LliiuqSAWQ%%%%%%%%%%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%W0W%&&%Q0U2tFi{}}i}3ueYSdUM%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%Wd[1{(JT?//*\n" +
+            "NZc'__^==,,^^^,,:_>rccr/zvJJvTT()TtfxBQ0MQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%Q%%%%%%%%%g4ylneoex2P94OM%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&gal}(7vszz/\n" +
+            ":_,;;=>+/>,==^^^^;!c/ssT)||Ts|C{F|CVBW%%%%&%&&&&&&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%%&%0OpbKAKVpkBWMQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&A]u}FJT?s*\n" +
+            ">><++><zJ*==;;===</vLT(it[I71Sa]S9$M$#$gNQ&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%%QRUdh4pgWNMN%&&&&&&&&&&&&&&&&&&&&&&&&&&&&NG[}F(vsLz\n" +
+            "cr!!!rr*L?!cr!r/zzL7)i3[jS5xG$0NWWNMMgMQ%%Q%&&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&%$bbGbHM0N0MQ&&&&&&&&&&&&&&&&&&&&&&&&&&&&&BSti|7L?z\n" +
+            "MmPy[1f}fIJ)T({txSa2PAR$MWQ%%%%%%QMNNW%%QNgQ&&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&QMBg0M000M0NQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&%UnC|7vLs\n" +
+            "000MNWWWWWMNWQQQQQQQWWWWQQQWQQQQQWNg$gg0M0MQQ&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&QN00000MMM0MNQ&&&&&&&&&&&&&&&&&&&&&&&&&&%Mql{7vvs\n" +
+            "g00MMNNNNNNNWQQQ%%%%%%%%QQQQQQQQQQ0XDNWNB0MMQ%&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&%NgNMM0000M000gM%&&&&&&&&&&&&&&&&&&&&&&&&&Q823||)s\n" +
+            "ggg00000000MNWWQQQQQQQQQQQQQQQQ%WN#80NMgB00Q%&&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%N0000000000gg00N%&&&&&&&&&&&&&&&&&&&&&&&%8k51CJL\n" +
+            "gggg0ggggBBgMNWWQQQQQQQQQQ%QQ%%%%ggWWMBRg%&Q%%&&&&&&&&&&&&&&&&&&&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%%Mg00000000ggggg0N%&&&&&&&&&&&&&&&&&&&&&QX9]l}(T\n" +
+            "00MMMMMMM00gNWQQQQQQQ%%%%%%%%%&%Q$NN$$$B0&%WQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%%&&&&&&&&&&&&&&&&&&&%%g$M0000gggggBBBBBgW&&&&&&&&&&&&&&&&&&&&%bw5[fFT\n" +
+            "ggBBg00MMM0MWQQQQQ%%%%%%%%%%%&&&%Q#O$B$0W@&&&&&&&&&&&&&&&&&&&&&&&&&&&@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%&&%%%%%%&&&&&&&&&%N9dUmD$BgBBBBBBBBBBBgN%&&&&&&&&&&&&&&&&&&%mEyZti7\n" +
+            "0000M00M0MMNWQQQQ%%%%%%%%%%%%%%%QggW%%%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&%%&&&&&&&&&&&Q85ES6hd4pX8DD$$BBBgBBBg%%&&&&&&&&&&&&&&&&&Qh5el}|\n" +
+            "0ggg0NNNMNWW%%%%%%&&%%%%%%%%%%%%00%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&WAe]aa]2ya2wqkVUKK8R#$BBDRQ&&&&&&&&&&&&&&&&QN9t1f{\n" +
+            "0gB$Bggg0MNW%%%%%%&&%%%%%%%%%%%QW%&&&%%QQ%&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&QQ&&&&&&&&&&&&&&QaYyEy5YyjYYZ5ja]]YkdUUKm8Q&&&&&&&&&&&&&&&%%QUx[}\n";
+  }
+
+  private static String getAllCyanImage() {
+    return "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n" +
+            "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n";
   }
 
   private static String getNoWidthFooter() {
