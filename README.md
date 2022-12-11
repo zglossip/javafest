@@ -1,6 +1,6 @@
 # JavaFest
 
-I'm going into this with no plan. Let's see what each release brings us.
+I'm going into this with no plan and am making it up one feature at a time. Let's see what each release brings us.
 
 ## Current Functionality
 
@@ -28,3 +28,7 @@ Initial release of Madeline Kahn as Mrs. White in Clue saying "flames."
 ### v1.1.0
 
 Add custom sizing option
+
+### v1.2.0
+
+Add custom height option
