@@ -19,13 +19,21 @@ public class JavafestService {
   public void exec(final String filepath, final Integer width, final Integer height) {
     if (filepath == null) {
       printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+      return;
     }
 
-    //TODO: Print custom image
+    printCustomImage(filepath, width, height);
   }
 
-  public void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
-    final AsciiImage image = flamesService.getMkAscii(width, height);
+  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
+    printImage(flamesService.getMkAscii(width, height));
+  }
+
+  private void printCustomImage(final String filepath, final Integer width, final Integer height) {
+    printImage(flamesService.getCustomAscii(filepath, width, height));
+  }
+
+  private void printImage(final AsciiImage image) {
     printService.printText(image.getImage());
     printService.printText(flamesService.getFooter(image.getWidth()));
   }

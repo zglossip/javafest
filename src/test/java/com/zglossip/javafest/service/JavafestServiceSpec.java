@@ -28,12 +28,36 @@ public class JavafestServiceSpec {
     when(flamesService.getFooter(width)).thenReturn(footer);
 
     //When
-    javafestService.printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+    javafestService.exec(null, width, height);
 
     //Then
     final InOrder inOrder = inOrder(printService);
 
     inOrder.verify(printService, times(1)).printText(mkAscii);
+    inOrder.verify(printService, times(1)).printText(footer);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @Test
+  public void testCustomSayingFlames() {
+    //Given
+    final Integer width = 100;
+    final Integer height = 100;
+    final String filepath = "file.jpg";
+
+    final String ascii = "ASCII";
+    final String footer = "FOOTER";
+
+    when(flamesService.getCustomAscii(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
+    when(flamesService.getFooter(width)).thenReturn(footer);
+
+    //When
+    javafestService.exec(filepath, width, height);
+
+    //Then
+    final InOrder inOrder = inOrder(printService);
+
+    inOrder.verify(printService, times(1)).printText(ascii);
     inOrder.verify(printService, times(1)).printText(footer);
     inOrder.verifyNoMoreInteractions();
   }

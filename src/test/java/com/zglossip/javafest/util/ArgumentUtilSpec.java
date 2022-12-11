@@ -45,6 +45,23 @@ public class ArgumentUtilSpec {
   }
 
   @Test
+  public void testFileArgument() {
+    //Given
+    final String[] args = new String[2];
+    args[0] = "-p";
+    args[1] = "file.jpg";
+
+    final Map<ArgumentType, Object> expected = new HashMap<>();
+    expected.put(ArgumentType.FILE, "file.jpg");
+
+    //When
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
+
+    //Then
+    assert result.equals(expected);
+  }
+
+  @Test
   public void testMultipleArguments() {
     //Given
     final String[] args = new String[4];

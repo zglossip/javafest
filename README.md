@@ -13,6 +13,7 @@ in Clue saying flames. I like to think that justifies its own release.
 * Navigate to directory in command line and run `java -jar .\<FILE_NAME>`
 * To specify an optional width, add `-w <WIDTH>`
 * To specify an optional height, add `-h <HEIGHT>`
+* To specify a custom picture (to say "flames"), add `-p <FILE_PATH>`
 
 ## History
 

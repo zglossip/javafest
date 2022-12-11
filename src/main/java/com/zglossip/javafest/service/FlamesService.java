@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -34,7 +35,11 @@ public class FlamesService {
           """;
 
   public AsciiImage getMkAscii(final Integer width, final Integer height) {
-    return getAsciiStringFromImage(width, height, getImage());
+    return getAsciiStringFromImage(width, height, getMkImage());
+  }
+
+  public AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height) {
+    return getAsciiStringFromImage(width, height, getCustomImage(filepath));
   }
 
   public String getFooter(final int width) {
@@ -49,16 +54,31 @@ public class FlamesService {
     return stringBuilder.toString();
   }
 
-  private static BufferedImage getImage() {
+  private static BufferedImage getMkImage() {
     try {
-      final InputStream inputStream = new ClassPathResource(IMAGE_PATH).getInputStream();
+      return getImage(new ClassPathResource(IMAGE_PATH).getInputStream());
+    } catch (final IOException e) {
+      throw new ImageException();
+    }
+  }
+
+  private static BufferedImage getCustomImage(final String filepath) {
+    try {
+      return getImage(new FileInputStream(filepath));
+    } catch (final IOException e) {
+      throw new ImageException();
+    }
+  }
+
+  private static BufferedImage getImage(final InputStream inputStream) {
+    try {
       return ImageIO.read(inputStream);
     } catch (final IOException e) {
       throw new ImageException();
     }
   }
 
-  private static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
+  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();

@@ -3,6 +3,12 @@ package com.zglossip.javafest.service;
 import com.zglossip.javafest.domain.AsciiImage;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 @SpringBootTest
 public class FlamesServiceSpec {
@@ -10,7 +16,7 @@ public class FlamesServiceSpec {
   FlamesService flamesService = new FlamesService();
 
   @Test
-  public void testPrintPicture() {
+  public void testPrintDefaultPicture() {
     //Given test data
     final Integer width = null;
     final Integer height = null;
@@ -24,13 +30,41 @@ public class FlamesServiceSpec {
   }
 
   @Test
+  public void testPrintCustomPicture() {
+    //Given test data
+    final Integer width = null;
+    final Integer height = null;
+
+    //When
+    final AsciiImage result = flamesService.getCustomAscii("./src/test/resources/good_for_her.jpg", width, height);
+
+    //Then
+    assert result.getImage().equals(getDefaultAltAscii());
+    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+  }
+
+  @Test
+  public void testPrintPicture() {
+    //Given test data
+    final Integer width = null;
+    final Integer height = null;
+
+    //When
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
+
+    //Then
+    assert result.getImage().equals(getDefaultMkAscii());
+    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+  }
+
+  @Test
   public void testPrintPictureWithWidth() {
     //Given test data
     final Integer width = 100;
     final Integer height = null;
 
     //When
-    final AsciiImage result = flamesService.getMkAscii(width, height);
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -44,7 +78,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = flamesService.getMkAscii(width, height);
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -58,7 +92,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = flamesService.getMkAscii(width, height);
+    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage());
 
     //Then
     assert result.getImage().equals(get100Height150WidthMkAscii());
@@ -88,6 +122,85 @@ public class FlamesServiceSpec {
 
     //Then
     assert result.equals(get500Footer());
+  }
+
+  private static BufferedImage getTestImage() {
+    try {
+      final InputStream inputStream = new ClassPathResource("madeline_kahn_as_mrs_white_in_clue_saying_flames.png").getInputStream();
+      return ImageIO.read(inputStream);
+    } catch (final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static String getDefaultAltAscii() {
+    return "(JI3uf3futZxeYyayY]axyxa22xCJ7)Lv{C}Ci))(T7vLzsvccc*//?zzzzsT!_=//JTz//*r!!++=,,^cz/z?LLTJ|CqqqqS]YnZIo}|7}o51C(LT7i(1o[}FF7{}7C[CJC5elt31f}}fIiFfl5utI3|}{|ICFiFf1C{u%&&%%%QQQNWWQQWWWWNNNNNMNMM0M0g0$g\n" +
+            "|)I1[C3I1lo5xyxjaayaYY5ayya}JJJLvCC}Ci(zvvL7L?/sc!*c*zzzzz*zvc^+^^czs///*+r>,_:^r+/*zz?ss)J7(u2]2SYe5Ce{((}o5t{(LTJ{|1e[C|((ifvI[i)IZ[ut3IC{}I}i{3[5ulfI|}{iI{iiF31{|N&&%%&%%QWWWWQQQQWWWNNNNMNNMMM0M0g0\n" +
+            "|)It[Cf3unxjjyy]]]22ayyxyYy1J7Jvv}C}}iJv/sT*sz*s*+!*/zzzz/*?Lc;>;<>;^+c!='::_,=<!!c//z/LLLTJ7(|F5SZn5{oi77}o5t{(LT7{F1oZ1iFii}L1liJlZ[ut3CC{3I}iC1e5llfI(fiFICFii3I{{Q%&%%%%QWWWWWQQWWWWNWNNNMMMMM00MM0g\n" +
+            "|JIt[C}I1eYxxneex]]2]xx5YjYILJJTvCC}F|))z*zzc!czr+c*/z?/*ccLs/<>++>!<;=^^_,,==;>+!rrc//???LTvv))J(neZFe|77Ce5t{(7|3[f3[ot13fttIt1{7u5nu1}C}{}fI{}toZul}3(fiFI{iiF1Iik%&&&%%QQQNWWWQQWWWNNNNNNMM00M00Mg0g\n" +
+            "{)3unICt1o5YjZZ5x]]]]xjxyaatJ(vLT{fC{|Jvv<c?!!z/rrcz/zz**//Ts/+;!!+<<<<=^^^==;<<+!rc*/z?sL?z?LTTLvJ[oCe777}e53{u1IC{J/)i)fft}u}Cf{fun[uICC}Cf}}iflZ5ul}I|f{FfCiiitf{Q%%%%%%QQWNWWWQWWWWNNNNNNNMMMMM0MB0B\n" +
+            "{)flntf11[ooxZ5ooayyxjay22ylJ7TLTfIivssTsz>!c<z*!c*zss/**/zLs/c+!!!!+><><>>><<+!rc*cc*//*z*/LTTz/zL)uCo77JCn51I{JL*<!*++z*/JtJ){F((i}CfI3I{}ff{{fu5ZulC3(f{iI{iFiuCI%&%%QQQQWNNWWWWWWWNNMNNNNN00000g0$0B\n" +
+            "i)Iun}Cf1u5xx55ZY]]2axZYYy][J)vLJi*!;=^=c/r>!;zc!c/zL?//*?zs?/c+<+c*cc!!+<+!+!ccrccrc**cc*zsvL/;!ssL)}eJ7)Ce1iJz=,>>/zccc*Lr/ssLLJ(ii{C{{}C}fI}if[xZuu}I(}{iI{ii{t}D%Q%%QQQWN0WNNWWWWWNNNMMNM00000000BgB\n" +
+            "i)fl[f{}3e[Zxyjaa]ayyj5YxaYl))vviJLz**r+=>c+=c*rrc/?z/*c*zsz**c!!!!cccrcr!!rccrr!!c******zsLL/;+//*?sJoJJv{1i7?=,riC{7)777LL/z?css|7(i{{iTFCI3{{InxZulCI|}i{}i{iilfW%QQQQQQWNMWNNNWWWNMMMMM0000000g0gBg$\n" +
+            "|)f[nf1t1en5oxxjxyaxaYxyx2x[({CC{srzTT/r!;++;r*rr/szz///z?zz/c!+ccrrcrcc!crc*crccc*****/z?LL*==c/c!z/*7J))CCFv*_[xjyY5yjjelC7L*+++)7(7{i(vsvf}FC3exeulC}|}i{Cii|{t]QQQQQQQWN0NNMNNWWNMMMM00M00gB00B0BBB$\n" +
+            "iJIuet1flu[e55xxxyy5YjxxE22n({)zc+rTJz,r!<^<;*cr*zz?////zz/z/r<<!r!!rr!ccccc******/c*c*/zsss<_+**+r/c+rJJJI|J|^oy]SSES2]axYZufJ?>;<?77FFJTTvTiiC1oxo[lCC|CF{}iFFC3WQWWQQWWNM0NNNMNNNN0000g0BgBgggg$g$B$$\n" +
+            "F)}[nl3uu1tnenZxeox5Zj]]y]2[|c/{{((7s+_r>=^^,cc*?szz/z///z/**!<+!ccccrc*cc*************/?szc';rr<+cz+>+zJ|{J)>uYjEaa]]jjY5Yon[1ITr^,z{Civs/vsT{Cl5ye[t}CFCFCCi||}ZQQQQWWNWM00NMMMMMM00gg0BggBBBBgB$gD$#$\n" +
+            "|Jf[nutulu[neZZjZ5Yjj]]2E2]5IfiF|(JJJ7vvJJ=,;r*/T?//*/**/**/r+++rcccrrr*******/*z*****/zzzc^:+!<<!cr*+=+7IivcTYaa22a]E]2yx5on[u{(/!>>JCJ|TLTs?vIu5yZ[l}C{C|}CF||}gWWQWWWNN0ggMMM0M00ggggggggB$$$g$$B#$D$\n" +
+            "(J}[nutun[un[n5xZZ55Y]a]]]n*s/!>==^;+>,;z7)z=!*zzz//**/*cc*rr+++r!**ccc****//*/zz/**/z??z*r'=!>=+rc+**;r/{iv^[|JCenyx5xxx5Yee[tC7?c+<FC)7)czTsTT[Yaent}iC{|}{F||3NWWWNWMN0g$000000g0BBBg$BBB$$##B#$$D#DD\n" +
+            "((}[[ltu[nnZnoZyoZYxj]]]2a?+?z/>FIl[en[u3C>!><*/*****c*ccrcr!+!!!c*cc*cc*/*////*z((zJ|vzz/<'><;<cc+r!c;c{F|/zfsz){x53|svfZl}[t13J*!<^7FJ(T*+rs?vCx]o[1f{C{F}{F|(RWWNNMMMM0$ggg00g0BggBBB$B$B#$D$#D##DD8R\n" +
+            "((}[nuttuu[eZjjyaxx5ZYyaSl(?*'*{f1lu[nnn[t}(_<!rcc!!cc!!++!++++c*c*cc*c//zz/z///)vv(7vcsFJ>:>>>+c>>^>+<*ii7zv?*z{IYYI[{TvnJ1tC31f?>>=)((|vsr<c?LvZ2o[1fi}i|}{|||0M0MMM00gB$gggggggBBB$$B$$D$##DD#R#RD#8R\n" +
+            "7(}[eutul1lu[njj5oZoZxya]i/s;>|{CCfIt[neeeeeo)>>++++++++++++!!!!ccc*cc*////zzzzz))ivs?sL+c-,>><+<^,^<>>!i)|?11t3tqjZuZn|(Lcv}3II3{><>T(J7z/c=>!zTI]e[3}i}{|}{(JpNMM00Mg0g#$BBggBg$B$$$$###D$RDDDDRD8RRm8\n" +
+            "(|fn[l331ntu[exj5oooyxjx]{!/->JFFFiFC}3uunoZen[t}!;><<<<++!!++r!ccc*ccc**/z??/zzz??vcsTs/c-^;+=;,:>!<=+/JJFsj2]SSn3tojxxetnn3I31If7,<r7J(z*zc=<<LJ5en3fi}{|f{((g000000gggR$BBBg$B$B#D##R#DDDR88888R888mH\n" +
+            "((}n[uII1u[ZoexjxejjYxjyjac^r_^J||(||FiC}I3luneneoZ1s>;><<++++!!cc*cc*c**///zzzzz/cr!rc+c^';,;^:,>++=>*cJ7)eaEy13ItluxE]yYon[ltI}}C?>cLv)7!!/rr<*i}enIfFfi|}{|h00g00gggB#8B$$BB$$$$$DDD8DRR88mm8m88XmHHH\n" +
+            "||fnntI}3tnoZxYxjjYx55ZjjxC^/c:,|F{{C{iFiCt5nuuCiu[1CiT;;<<++!!rrc*c*c*cc*/*//z/*cr++<>^,_:==_:^+r;^>c*[{7soY5[|C}cJ3nxYeuul13ICCCi7!</JvJv+,>c!*v5nnII|f{|f{|BgggggBBB$mDBB$$#$D#DDDR88R88m8XmmHmmXHXHX\n" +
+            "|i}n[t}31lZ55YYjjxyyxZZ5YZYc/*/='(|iiFi{{iiffIC}tCIuu{|?+<<+++!c!rcccccr!!rrc***!+>==^,__':__:,+!<>cczLLiTcenx]j5elloxZont}}I1I}C{|v!;L))7vT+!==<JZn[fI(IiFfF9BBBBBBgB$RH#$$$$##DDRRR8m8mm8HHXXXXXXXXXXX\n" +
+            "||}n[1CfInZ5YZ[[[xyyyY555x5YsL*c=':vFFiFiu1FfC{fI(ut3tAUOXp9(Lv!*cccccr!++!rr++++>;=,,,_:'___=>+<!czsT{Ivz*u[fF{ttnnnen[u1}}113f{{|7J=rJFT/7Jc>=?Tonu}I(Ii(C{#DDD88mmmKUUKKAKAUGGGbGOppOpOpVVVVpppOOOOOO\n" +
+            "7FCenlCt1[o55ZennjyyyY5Y5yy]]an/+*<=fR$$#qC||C7{()tIi{kOAXR#Ddk2|c*rc!!c!!r<>>>;===,^,:'-'_:,>;<>,^^^T)|vTcCtv,))(=LF11}l3}It13ICiF7v^>)F(v//zL*s?Ye[}3|I{FCUXXHHKKAAUGppOOVVVpV44V4d999996P6kkqqqwwwwww\n" +
+            "i7fe[u311uoo5nneo5xYY5xjy]ya]2]jayaE8#$#$A|T((J|7T|vv}nxwbKKKKp62*c!!!!r!+>;;^=^,^,,__:---___:_<!rr/z+s|J+^)11{C1}{iiC|}lI}331IfC|(v)+z7)(7)!rz/LJ[e[C3|Ii|[6dXRg0gg00gm000gBB$BDD8mXAUOp49PkS2ajYZZel11\n" +
+            "Fi|nntffIlZ555[exxaaj5eZZx22UUOUhYaX##$$RUY|vLTTJ)svvLz/cOKKKAGG8YCr!!+r++>=;^^^___::_--.-''!_>sT<*/*=*((szsle1fC3IfII}}}}}33I}{i|J)T*((JvJs/c!>/vYe[{I(Ii(}|F|I}}[Sp8BMNNWWQWWWWWWWWWWNNNMNMM0MMNNM0pZ5\n" +
+            "Fi(Fnutu[ZoYjyyx22ajay5Yxjk2ajxxqVX8#$$DHV][3(+<><)F/!+rcpKKKAGpVqE*+<!+<>;=^^^,,,_:-'?5eelI}{{{((|+zzz!LJ/4Zyjy5e[t1tl3}fIIf}C{|v;(J7FTsJvz?c+>czxe[iI(fF|CF((I{iJ}i({i(F}|)v)J|}|vL}i((vsC(7)7{7?)SXp6\n" +
+            "i{{L1Zxy]2SwwwwwkwwwwSSSwPSwSSSwShKmR#$D8pwanF!rnq9hqZ)rTKKK8AOpVp5e+<<<<>;=^,___:'--}Zn11Jue{777Jvv<*/czJv<o5n[uult[lII33I}}CiFT*+Lt|T?zvcz!<=>+{on[{f(}iFCF(73{iJ}F7{F(iC|)Tv)|}|vL}i7(Ls}(J7FI7]KwZee\n" +
+            "F{C7|J(Fi{}}fffI331111o6x[uunnneZbAH8R$$D$RyyYYYYjxjyySRBBBDHUGOp4V6!<++>;^,____''--'{n3(?ZY2[Czz/z/c+*<cc|(Tt}C}}}f}{}}C{{i|()LLc*|5Tc/!?/+==<?Y]5n[{f(fiiCF(73i|v}F({((iCi)Tv)|{(sL}i7(TT}()]AXe9UG4pb\n" +
+            "|{CiTIlnoYxjyaaaa]]a]q2aaaaaaayy6UmmmHm8m8mmmHHHHHXXHHXHmHKXAKUGpVpVj<<<>=,_,:''''':Lx[CrijafJs/!!++>_!!<++y)+TFii|7(777J)J))77)?!;Lt+;<!!c!r<+LSEYeuif(}|i{|((3F|J}F({|7{CFvvv)F{(ssCi77LL}(JObGARB0#MB\n" +
+            "|iCCv}teYjya]2EEEESSw2qwwwwwqqqkpXHHXXmmmmHHmXHXXXXXHmXKKKKKAAUbGGpdd<>>==^_<lwDHGK8VmEvsvL?//c?+<>^_'<^42}iJ|I+C()77(((J7|(|(77L!=(f+;^<c!c;rn2SSYn[{}|}|ii|(71{|J}|7{((C{|)TTv{i7sT}i7(LvC7J7gMM$8D8bU\n" +
+            "iF{}J(1eya]22EwwwwqkwqqqkkqkqqkVqdVOOpppOpGbbUUAbbUUbbOV99h9ObUAAUAKKu}EX9mOKb6b8dmAKp[>++*rc/r+>^:--_rabyJTvCu1C}7((|F(|||FF((|L*<=_,;<!!!!522SSS5n[i}F}|{i|773i()}|7{(7Ci|vT)vCi7sv}i7|LJC(J)aGp9h96wE\n" +
+            "{i{}i}]ySqPh4VbKhd26ddddddddddd4kEGKXXXXHXXXXXKXKKKXHKKKAAUUbbbbOGGGGXbwbUXAGHKKmd9k]u?!!+</*/r+_--':^!UOh(zsv(73I|7(FF|iFiFF{i|)L/>;,_^^=7y2S2SSS5nuFfiC|Ci|7(1i7)CF(i7J{F|vTvv}iJsJ}i7(L7}(7kAOb4Vhh9d\n" +
+            "mmXmAAUKXHKXKmXHUUOGKpGKmmHKAUOObV4VGGG8XUKRRKKGppVhh6S]Zenl13}|JTs*rct9kKHXKmUKyAVee[*>>++cjc'-_1m88mXUUbSJvfne1fi(7|((|FFiiF|F77TvvL>c|yy22EEESSZnliCFC|}iFJ(3iJJC|(i77{i|v)))}FJzJ}|77?7}JUA#UUU0ObUU\n" +
+            "49pGX8DDRH8XHmmDDRmXKmDRR8GphEwGRDRmG8$$DmmAURR9hmXhpUABDUkRXmmDAmRAdARmHRmAX4AedEfZu/c+r//I2ZSm8UmHHHUGAAV(teZn1Ii(iFiiFiiiii|((|(77Jv<vC3oESEESSZ[liC{C(}||J(f{J7{7|i7(CiF)v)J}FJz)C(7(s(xDgDRgRggXXXX\n" +
+            "xxa2S4XAUdhPjlewhh2EEE2SdOVjYOU9kSaeuxGmbObdbmXGd4AXSyka]jGhw3k4h9dU5ddxl9]j993o}i3}3cT)zz5xxXAX4bAAKXAUAAbaZ55u1}{i{i{CFFiiFiF(iii|i|(7sc{lZ2EEEEe[l{C{C(}FFJ|}i)({(|F77{F|vv)J}i)zJC|)uAKMBgRBggND0MRR\n" +
+            "oa2]aj55ZYYxy4dVwqStIZqkaaaa]2dh6eYhdPx5[llZpKpbhKG6a2h1wE[u[6wSIwakyhxoj1[xk[CiIIC(zv(JscY5HXUhdbGbKUGOUUK4nZ5ut}}C{{{{F|||Fiii{iiCCC{F7ss9qEaEE2o[tCCCC(}i|J|}F)|i(iF77{||vv)JI|vz7kmgM00gggg00NgKHAR$\n" +
+            "le[eZ5aoIx6d][nZenn]h6hwkoCl2Exy2ayqdhEu]9pO6kaS9pPyE]EoEw3kxuZ5qqytEelYxeYqjy(}C()7?Ff7J>uXKUdh4bbUGUUUUbAKEue[1uf}}iiC|(FF|i{CC}II3f3xVhw2jjy2S2ont}CCC|fF|J{fFvii(iF(|C||TvvJIFv?(bpAOVGg$DXbmXKpAAX$\n" +
+            "YyaajYoyyj]qhwu3]kq5[ZeooxP44dhZ1[]]22]2kpKXpSVGVy1x62Z9E]j2S1heYZkEx(ZyloSek}f{T7sFs7|JirpKUpddVbbAUUUUUUUKO[nZnuIIi(7Fiii{iCC}3I3n94hw]]]]2xjyE2Zn1{}C{(}F|){C|v{i7i|((CF(vvvJI|vz{bUHmKHUDBNMgUUKmO9U\n" +
+            "xYjZ55Y5akqwEEaY52P6ZIe66Een[[Y]OKbh2n1a49dOOV9d25E]u[SkZxOjxY6xeP[Ylyeiox[dnI|)Lvc|r7B$$RmXUpdVGbKKKAUAUUUbbG3onu[tCF}}CIII3IIe9GdhwE]2SPhd96qwyEen1C{C{7}i|J}{|v{i7{(7(C||Tv)7IFT?(VpAGAUXmDg00BB00g#D\n" +
+            "ennlu3CI2w]Sxeak6w]2ay5xqqStC]wy5e52awGpGphYeaSa]a9[Ekaox6]oaw2y2dCy}It5ZC9ou5T/TT/wBgB$B$D$0#4pGAKXKAAUAUGGUA4tYYeon[t1l2GpOV9h6kwwwkkdpGbOO4Ejy]e[1}{}C7}i()}{|JCi({F7|C|(vv)(IFL?(4Op4OAXKKKpK8GU96]O\n" +
+            "a5ntI3e2S[t3e29ESEjeoShP2a]yxYE6knlkky5awPkhG9qi[j]yya[hSYeyy]YSkwxyFn1Z}SZ[[[zvv6UXDXX8Bg$A#RKGUXHHHKKAAAUGU33G1ea6OGV4hh6PPkqPSqqkhVpbGGSpVVdPP2xu1}{}{7}i7J}{7v}i({(7|{((T))if|s/FSP$hUhUOVVGO9UVkhwq\n" +
+            "eooneeoYS5kP6axet3ux6hS]25lx9dwk6EyEP4jtjdVwYj]24Zi2yExPo]da1lhSeyS[n1l(SSjj2qSqP6q]GYhX9ROA9{tOAHmmXKKAAbf{CIlnd9hkkPkqkqkqkkqkkPhpbbAdUUbUGO4d2Syu1C{f{7}i(JI{7)fi7{(7F{|JT))|I|szFYdHm9A9dpU9bHw44mKp\n" +
+            "tfi(i{tx2yEPh][5PhhEyY[31n]Pkq6Eoa6VS6dqw64pP3ok66P9fnw2SyE[dwj[E]Z31IJou1ui33n1xatI}i7T|JJI[qUUXmHmXAUV5OOdqSwkqPPkwqqqqPPP6h9hdpObVUUUGUUO6hpdkwxu3}if{(CF77IC7)}|7i((i{|JTvvF}(szin9V$Kd4GVpGUh4KGVhh\n" +
+            "teYj2y]]2n]xYaay2h6qY[]96Syxett5PVd49Ewh6h69q2aEq]}nE9]f]axjP2xkxf11}(tIq]1[{Tv|f3}t11eZney2aSSwVKXXAAf3dbUUOV44hw99kPPkP666994VOGdKpGbbUkG6hhh6kS]]I}ifi(}FJ)f{J)CF7F(7{F|JTvvFC(zzindVVmGAAUGUkS64SybY\n" +
+            "2Sjn11131nSxC}5kw]y]]aywPhwexh4dax51nZhUpd6x5S6h2aZja]Ziah[PEPShn2u3}3}5e[unYY[Z5ut}u3(T)(}t1[tuo5xjS2SddOGAAAAUO49Gpp449d9d49VVZUp4pGKPwS6ppdhP6E]a3}iCi7CF)JI{)JCi(i(7ii()T)vCC7ssiuw66dGdpGh6692jGaZq\n" +
+            "Yya2SSyoC}5Z2kPwSju3t]w]YxY22q9pSnw4ddwwxI1]GV9wana9255un2a}3EwSyY[tt|C77||(|Fi|ifFzojn1ZZn}vv|}1l[eZ]]Zxd4OUAAAUGdAUbOppOpp45wAp9hpApSyqVOVhPPkqayjY7iv|CCuZ5]PeeadZCFi3{(vvvvC}7?z{5Vd]6hdw9hdw]qwoyOx\n" +
+            "yyxYYYxx5ZZSY[nnnZa6kkSEe}}YqSawqwhVObheqOGd2ufi|Zayqt[k]l[lfo5u}uui(ffy[1{37TvTTs*/zL)J}1[[[ejax1(F}tutue69dVObAAGVUUbGXm86dAG4PhOU4]jkOGVkwqkwkyxx5LTTuYtirzi(20BBBgAT/y|vLJ){C7z?{qOqw2aqkwaSa]5jdjZP\n" +
+            "jjYe5Z[[llYywu}xkkxonneexq69w2Y1t]hhq6wPqh9kalf}fII3CioZZlC35Yyan1t|I)Zn5JJ{v)TTvszzTxGO9TL(|If3tn5j]ayut1[ohhhd4VGOOSOt5YnSAjqdOUUhjohU4w2EqqkSSyxxYnvkTrC+vI{JuLZ62s[2/f2oy(11f7(9652hhUGKAKAOd9Sk]2E4\n" +
+            "}}{CiCf}l5yyajYY]kwyItqPE[n[Yex2P6hqYutqhExjenln[uut33fI1I}[jSoY[o|is{u]ZZC{u)?LTvIhXGVGUA9TTv<*J|i}}Iutft1neEkPPhPhqa2xRUwu]V2pAVquSdk]]q996kqEayx5Zoaj<<)nlffi7,+*{c^rcs]x{|{}}YwkI]Sxa2]]jykSwqwSS5yk\n" +
+            "2]ww2Ea2ay5ex5kkqyEyxxxSP]liShkZneo5YShkSaZfFFi{CII1lun[[u[no[[}uouJiia5n{q)TTL(Ci3fVOVGUUAAAJZt|}ffi|}ftI11uoahPh6q2x5w]hk{Sd5AdS5a2yaPdddhkqSEx5ax5[y7<;e]5xlte_::^+,_>=zkJ)TC1[Zxhh95haa]]a264wj6axSh\n" +
+            "YyxyjE2]a]2]nq22S5eZSkqayyayyEd6tuhSEnooZlueyy5y5x5yxxyoZZYYYyooe3{(F3noejh(1JT)T|1[144GOGUUKK(??({un3If}3133tu64VOVdyV[IZ[o2qO62oYy]PdV496qwEy2e]YuyYe<<,}C(|7J7{,.-=-.=TJ5}Jv|7[3Ie]S5Pau5SuxqS22PSP]E\n" +
+            "Y]2EwqS]y5Z5oa5t3f[S6wjSy[n]dkSwEyy2kwZ|3awYZ1ICC1}FfC{3ItonZZZYx|{7(I[55V1=|TTs)itcjpppVOGUAKA[iIC)77F{}F11If316pUbpXYltZdZUVqyno]9VGV9kPSwaw6w]xh[F{55r^_<^,-^'--.`'.-+5555iTvJF1}F3Y2oe35xt5ya5ZPjSZa\n" +
+            "Eaa2]axyyyYxl5eSkqSYjuCIuyPq]qEYydhk2SYYoo5xxxx5Ynu131t}{i3ojwxo5[C?F{njowaJvvLsvJ7lEhOOppOGAAAAdvi}}i(F{{}}333tlhVGAh]t[tGO9]aI569dqE2]S]yawSqh6ufIfn5ll_^_'-'',;<<c''!e}Cl{}fCff|zT(n]et3lntu[olt]oxua\n" +
+            "u1ttl[lu[tul[ejyq69juyqP6]5Ynu[]9qw]YnY]EyyYn[tluuul[e5eYZZ5yyZjF2i(oooCnwk?9(TLTf+e29GppVVpObUUAK()vJ(|FiCi}}1I3lbOpOGbUbdwy5[5a2ESSqqq2x9Sqkq113YZ5}nuC//r_--.-'--+rzTv)Ts?TssLc}5LTCuIeune3nlul1e[u3E\n" +
+            "7)77|{}15xy22yoqjxy]j2EPhEZeSd9Exot1uaSEa55ee[1}3II3IIIuYEkddae|eZexY}1C|]xn!rz*sntuZVdhhhh9VOGAUUUKXevJ|Fi(Iiff1tuUAKAb4qaxe1eakd944d2wdhUOVYf3YwaeZk21{J7iT>>^,:>:'|^:=r?+>;,>!?}[Sl)1a2epZo2[I5Zot1nZ\n" +
+            "ajYZnneeene5ZyES21f[]qjaYaxywh9EnEPkEZentC|7J77J((|C3n]w66dqYux{x5[33l7v5ynI{{{}I3tu5]wEEEEq6h4VGAUUUUKHvTiIIfCI3l[3bG4q]5l)C[yq69d9Ewk4V96YI1obkZyhwnoyYf}3(/<==cFs._cr<^.-,<FiyzF)eZxx2OE6]Y6ayPa[2jZe\n" +
+            "ue555jyEESw]aja5n]kPE]2eCf5qq2wS]EPh]au3l[oo55eZYZajE]yayaxY5ZY5eIiy(zFIqj[fF|FiCf31owy5ZZ5y2Sq694pbUUbp]vJ|}i{fVAZGhqajoZ5)15S66hw6qP8wUYloa44ZwwaEaaYuet[J??z*zTF7r_-T:'+i1I7}{*T7JJne69k]]jkwSq9yyadS\n" +
+            "qq2]]ajajyjjxZxx]Yu1[e[oPqqq2]3[qEjYejenoulu[leZY]SqPh6Sw]n5Z]a3CaFTLf{v]y[}FFiFi}}IuouIfffunZYy2qP6d4V49}h31D0%GUqKP6q6VD8AbA8U4yqwU6GS3eYpdxxVt{()72]ZY3)IiL?TJLvs/!:(!{Cz=!+!rt*{I{/+hb6SPdwkqSaxoey5\n" +
+            "en[ul[[[[1I3}{}}uqn{akkj1eu[Zj9hSS]1C|{1l[eneoZZox5yESEqjY5y1{fnCT7}3JwExx[}|(7|iC{iC3LTJ((|ifI1[oYx]qS2wd}ZYk$WWVPSdqw6pg8XOhOGAZw2bm[tjdReapVk[3iT7YeI1(}utLz*ccccrcz7ls>=+czinie1((3r>pa]d46SVP2dq]qq\n" +
+            "eenu1111It1[5yE2SyjYY2kSa{129SZZo[[uoaaY5e[eene5yy5Z[uxjat{{aCis){I{YSI2y5[f|(7|i7QrI/0<&'&r0<1r$}7L7iX|W1|!elOYY[@{EQ}V2DKU6dbGb9]Xe}oSma2mPh[xxn3|Tx5I)I|v*!!+><>;>+*)I?//cz(LYC1ss|3urIK6]Vd9qqwwPqSa\n" +
+            "nn5Zee5YnZxYxYxxyjYqSayaaj5a6q5uxaxetfFC{}CI}1[ttexxyaY7Ijf(LL7Cf}[Y7y]S2e[fF|(1J(%s*<N<g;%*0rt/D|v({spJMZ11IeOtYx%[Y%oNwbRRKUXUhPw5ly9q2kVGZhyIjo1{((j{?s)!<>!;==;;;>+Fn}}|*c*i((tLrc}5F+ZRxw9khE6PkOkw\n" +
+            "J|F|F}f}Il[xxEEwaxy]]y5[ZyqkSk2enunoZnlf7v2awEaw[J7t5t}(7zzv{I3u[e|6E]kyjutIi|((Fii|()s=LFC}}{|iCf}C}CIIuenZnxxhk9Op2Sk9ppO6aPdhO5IaYGyZUP2a9P35eu3iv?n*/?/<;>;==^====<![7c=Ivjs?111+!+_+:'k92PdShS66]kS\n" +
+            "]]Eqwq2E2S2]22]Eyaxt33[jSE2E]Z]wwayywkwP]{v)T)vJ()vLz*/v)C3I7eIoI2SSay]Sw5tI{FF||ii|(vT,|33ttt3IIfIIfIf33uoZZ5W&%8kEjPojwAOVmB9e11oqa2pPhY55eynl3Ci)z_?tc,;><==^>==^==;>svc!zx[Zy1i^^__^<:>=VVw6dk9hkhxq\n" +
+            "ItIl1t1}}13u1Ilu[[lewk2ZZnt3taSa]22Ivs)((|JLvzss?TTJiCIC()75[l{q]qawxxSyEYu3}{iiFiF(vs*zC1u[5xjYeu1113131f1l[n50%W[uno]bDBRBQRe35a9nadVYk5Ynt2nfi(J*:-vF}v_+^+<>>=^^^==+s7CCJL<=<;Fevf!=>^^>;bUddhhPS62S\n" +
+            "q222yxnu1IfFCi1nxyEy]qEjunS66aoCtLT7vzJ|7JLv+7JTvJ|J7JL1eoyv[a6Sjww5ZYoaeao1}{CCii|JJftoenl1I}}f1tee5x5o[3Ctnnonm%0x55]6$R#Qx1Znha2KPPdqSno[nyY1(z_</?)c|,>^<>=;=^,^=^=;/v*crr!c!vv7s!>>+>=+<*VdOh9V49hE\n" +
+            "oenYYxYo[Z]yYxZnoZZxyZYYYx]hh2IivsT/sLsLL?vFs?!zL7eCCYoCL[ZxEy5jyYaeutynl[ZeIC}}C{(vTC1l[lt3}Cii{{ii|J)}3tIC3[eulH%Beu4oSh#n[1jqYdVVj]]Znu1uujn|/TTT{s!;^;>>===<;==^=^^=*(k7??(LzzLv?Tc<+><!]onwq66S]xEa\n" +
+            "I}3ttu3I1uZeejwhVdP]Y[if*!!!!!!+!+!!!r!!rcc//J7Fz|s?13Ill[n5ye[[ye[utlxu1tt5j1fIfCvF}}I3[YyjYY5o[[lt1t31fC|i{t[t]a2$UbbSXd1tydenVk5yk]yxaje2II557//*r!<==<><,_,:'/,',^^=ri(7<vL//rzvT*L*r!+zVZxyOV54hVjq\n" +
+            "J(}tZaayeeI{{|7(FIoxZC!+<>====;==>><>><+>++++++!/!*)CI33I311un1Zltn3}Iet333l[55ZuZueoZnuuC3e5jaayx5ZZZoee[[tCxwyn2hdNgmAfIawyoOSkyxq]jyay1tY5nnn[fJ/+;>==<r=,,-?LcLr_^,^<zTTrcL?*cs/sv(T)!sJT356Op6[]n1x\n";
   }
 
   private static String getDefaultMkAscii() {
@@ -232,17 +345,6 @@ public class FlamesServiceSpec {
             ",____:__:'-......`.....`-,!_',^_-                                                                                 -__:__:_,___`                 `staqO\n" +
             ",,,,::::_-...````````    -v=^_-                                                                       ```        .7L!;^,,,^^^,,,,'              `J1e]h\n" +
             "_,=,,,_''`     `````````-    ``                                                                      `.          `1tf1ntl[n[l33uvz/!+`           ``ze]\n";
-  }
-
-  private static String getDefaultFooter() {
-    return "                                                                  ________ ___       ________  _____ ______   _______   ________\n" +
-            "                                                                 |\\  _____\\\\  \\     |\\   __  \\|\\   _ \\  _   \\|\\  ___ \\ |\\   ____\\\n" +
-            "                                                                 \\ \\  \\__/\\ \\  \\    \\ \\  \\|\\  \\ \\  \\\\\\__\\ \\  \\ \\   __/|\\ \\  \\___|_\n" +
-            "                                                                  \\ \\   __\\\\ \\  \\    \\ \\   __  \\ \\  \\\\|__| \\  \\ \\  \\_|/_\\ \\_____  \\\n" +
-            "                                                                   \\ \\  \\_| \\ \\  \\____\\ \\  \\ \\  \\ \\  \\    \\ \\  \\ \\  \\_|\\ \\|____|\\  \\\n" +
-            "                                                                    \\ \\__\\   \\ \\_______\\ \\__\\ \\__\\ \\__\\    \\ \\__\\ \\_______\\____\\_\\  \\\n" +
-            "                                                                     \\|__|    \\|_______|\\|__|\\|__|\\|__|     \\|__|\\|_______|\\_________\\\n" +
-            "                                                                                                                          \\|_________|\n";
   }
 
   private static String getNoWidthFooter() {

@@ -30,7 +30,10 @@ public class ArgumentUtil {
           position++;
           argumentMap.put(argumentType, getIntFromValue(args[position]));
         }
-        case FILE -> argumentMap.put(argumentType, args[position]);
+        case FILE -> {
+          position++;
+          argumentMap.put(argumentType, args[position]);
+        }
       }
 
       position++;
