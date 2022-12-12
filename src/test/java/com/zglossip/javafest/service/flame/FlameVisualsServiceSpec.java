@@ -15,6 +15,8 @@ import java.util.function.Function;
 @SpringBootTest
 public class FlameVisualsServiceSpec {
 
+  //TODO Clean up test data (it's currently faulty)
+
   FlameVisualsService flameVisualsService = new FlameVisualsService();
 
   @Test

@@ -100,6 +100,8 @@ public class FlameVisualsService {
   public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final Function<Color, Color> colorFunc) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
+    System.out.println(image.getWidth());
+    System.out.println(image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
 
     for (int y = 0; y < validatedHeight; y++) {
@@ -126,8 +128,8 @@ public class FlameVisualsService {
       if (height == null) {
         return DEFAULT_SIZE;
       }
-
-      return height * (int) Math.round((double) orgHeight / origWidth);
+      final double multiplier = (double) origWidth / orgHeight;
+      return (int) Math.round(height * multiplier);
     }
 
     return width;
@@ -135,7 +137,8 @@ public class FlameVisualsService {
 
   private static int getValidatedHeight(final Integer height, final int validatedWidth, final int origWidth, final int orgHeight) {
     if (height == null) {
-      return validatedWidth * (int) Math.round((double) orgHeight / origWidth);
+      final double multiplier = (double) orgHeight / origWidth;
+      return (int) Math.round(validatedWidth * multiplier);
     }
 
     return height;
