@@ -13,9 +13,9 @@ import java.io.InputStream;
 import java.util.function.Function;
 
 @SpringBootTest
-public class FlamesServiceSpec {
+public class FlameVisualsServiceSpec {
 
-  FlamesService flamesService = new FlamesService();
+  FlameVisualsService flameVisualsService = new FlameVisualsService();
 
   @Test
   public void testPrintDefaultPicture() {
@@ -24,11 +24,11 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = flamesService.getMkAscii(width, height);
+    final AsciiImage result = flameVisualsService.getMkAscii(width, height);
 
     //Then
     assert result.getImage().equals(getDefaultMkAscii());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -38,11 +38,11 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = flamesService.getInvertedMkAscii(width, height);
+    final AsciiImage result = flameVisualsService.getInvertedMkAscii(width, height);
 
     //Then
     assert result.getImage().equals(getInvertedDefaultMkAscii());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -52,11 +52,11 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = flamesService.getCustomAscii("./src/test/resources/good_for_her.jpg", width, height);
+    final AsciiImage result = flameVisualsService.getCustomAscii("./src/test/resources/good_for_her.jpg", width, height);
 
     //Then
     assert result.getImage().equals(getDefaultAltAscii());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -66,11 +66,11 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = flamesService.getCustomAsciiInverted("./src/test/resources/good_for_her.jpg", width, height);
+    final AsciiImage result = flameVisualsService.getCustomAsciiInverted("./src/test/resources/good_for_her.jpg", width, height);
 
     //Then
     assert result.getImage().equals(getDefaultInvertedAltAscii());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -82,11 +82,11 @@ public class FlamesServiceSpec {
     final Function<Color, Color> colorFunc = color -> Color.CYAN;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), colorFunc);
+    final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), colorFunc);
 
     //Then
     assert result.getImage().equals(getAllCyanImage());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -96,11 +96,11 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
+    final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(getDefaultMkAscii());
-    assert result.getWidth() == FlamesService.DEFAULT_SIZE;
+    assert result.getWidth() == flameVisualsService.DEFAULT_SIZE;
   }
 
   @Test
@@ -110,7 +110,7 @@ public class FlamesServiceSpec {
     final Integer height = null;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
+    final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -124,7 +124,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
+    final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100MkAscii());
@@ -138,7 +138,7 @@ public class FlamesServiceSpec {
     final Integer height = 100;
 
     //When
-    final AsciiImage result = FlamesService.getAsciiStringFromImage(width, height, getTestImage(), null);
+    final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), null);
 
     //Then
     assert result.getImage().equals(get100Height150WidthMkAscii());
@@ -152,7 +152,7 @@ public class FlamesServiceSpec {
     final Integer width = 10;
 
     //When
-    final String result = flamesService.getFooter(width);
+    final String result = flameVisualsService.getFooter(width);
 
     //Then
     assert result.equals(getNoWidthFooter());
@@ -164,7 +164,7 @@ public class FlamesServiceSpec {
     final Integer width = 500;
 
     //When
-    final String result = flamesService.getFooter(width);
+    final String result = flameVisualsService.getFooter(width);
 
     //Then
     assert result.equals(get500Footer());

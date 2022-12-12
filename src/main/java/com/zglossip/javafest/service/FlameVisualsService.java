@@ -18,7 +18,7 @@ import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
 import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
-public class FlamesService {
+public class FlameVisualsService {
 
   private static final String IMAGE_PATH = "madeline_kahn_as_mrs_white_in_clue_saying_flames.png";
   public static final int DEFAULT_SIZE = 200;
