@@ -27,12 +27,14 @@ public class JavafestServiceSpec {
     final boolean invert = true;
 
     //When
-    javafestService.exec(filepath, width, height, invert);
+    javafestService.exec(filepath, width, height, invert, false);
 
     //Then
     final InOrder inOrder = inOrder(flameService);
 
     inOrder.verify(flameService, times(1)).printFlame(filepath, width, height, invert);
   }
+
+  //TODO Add test case for copy
 
 }

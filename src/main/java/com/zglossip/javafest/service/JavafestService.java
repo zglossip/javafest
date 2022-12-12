@@ -17,9 +17,10 @@ public class JavafestService {
     this.imageEditorService = imageEditorService;
   }
 
-  public void exec(final String filepath, final Integer width, final Integer height, final boolean invert) {
+  public void exec(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean copy) {
     flameService.printFlame(filepath, width, height, invert);
-    imageEditorService.copyImage(filepath, width, height);
-
+    if (copy) {
+      imageEditorService.copyImage(filepath, width, height);
+    }
   }
 }
