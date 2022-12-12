@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 import static org.mockito.Mockito.*;
@@ -22,7 +20,7 @@ public class ImageEditorServiceSpec {
   final ImageEditorService imageEditorService = new ImageEditorService(imageIOService, imageScaleService);
 
   @Test
-  public void testCopy() throws FileNotFoundException {
+  public void testCopy() {
     //Given
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = 140;
@@ -45,7 +43,7 @@ public class ImageEditorServiceSpec {
 
   //TODO: I don't like this test, but I just don't want to deal with this right now
   @Test
-  public void testCopyNullFile() throws IOException {
+  public void testCopyNullFile() {
     //Given
     final String filepath = null;
     final Integer width = 140;
