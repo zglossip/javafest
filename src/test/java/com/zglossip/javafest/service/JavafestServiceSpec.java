@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.service.flame.FlameService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;

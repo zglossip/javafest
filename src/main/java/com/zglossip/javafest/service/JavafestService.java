@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.service.flame.FlameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

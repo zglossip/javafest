@@ -1,4 +1,4 @@
-package com.zglossip.javafest.service;
+package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.domain.AsciiImage;
 import com.zglossip.javafest.exceptions.ImageException;
@@ -15,12 +15,12 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
+import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
 import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
 public class FlameVisualsService {
 
-  private static final String IMAGE_PATH = "madeline_kahn_as_mrs_white_in_clue_saying_flames.png";
   public static final int DEFAULT_SIZE = 200;
   private static final int FOOTER_WIDTH = 69;
   private static final String FOOTER = """
@@ -88,6 +88,7 @@ public class FlameVisualsService {
     }
   }
 
+  //TODO: Replace this with ImageIOService
   private static BufferedImage getImage(final InputStream inputStream) {
     try {
       return ImageIO.read(inputStream);

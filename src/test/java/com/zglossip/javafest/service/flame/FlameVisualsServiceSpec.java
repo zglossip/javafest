@@ -1,4 +1,4 @@
-package com.zglossip.javafest.service;
+package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.domain.AsciiImage;
 import org.junit.jupiter.api.Test;
