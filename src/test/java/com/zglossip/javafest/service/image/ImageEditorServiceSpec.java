@@ -24,7 +24,7 @@ public class ImageEditorServiceSpec extends TestBase {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = 140;
     final Integer height = 170;
-    final boolean invert = true;
+    final boolean invert = false;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -48,7 +48,7 @@ public class ImageEditorServiceSpec extends TestBase {
     final String filepath = null;
     final Integer width = 140;
     final Integer height = 170;
-    final boolean invert = true;
+    final boolean invert = false;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -71,7 +71,7 @@ public class ImageEditorServiceSpec extends TestBase {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = null;
     final Integer height = 170;
-    final boolean invert = true;
+    final boolean invert = false;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -94,7 +94,7 @@ public class ImageEditorServiceSpec extends TestBase {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = 140;
     final Integer height = null;
-    final boolean invert = true;
+    final boolean invert = false;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);

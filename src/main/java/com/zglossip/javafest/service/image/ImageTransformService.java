@@ -38,7 +38,6 @@ public class ImageTransformService {
     final BiConsumer<Integer, Integer> cellConsumer = (x, y) -> {
       colorFuncs.forEach(func -> {
         final Color color = func.apply(new Color(image.getRGB(x, y), true));
-        System.out.println(color.toString());
         coloredImage.setRGB(x, y, color.getRGB());
       });
     };
