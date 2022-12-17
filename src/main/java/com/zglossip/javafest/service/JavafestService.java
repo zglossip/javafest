@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.domain.enums.EditorType;
 import com.zglossip.javafest.service.flame.FlameService;
 import com.zglossip.javafest.service.image.ImageEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ public class JavafestService {
     this.imageEditorService = imageEditorService;
   }
 
-  public void exec(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean copy) {
-    flameService.printFlame(filepath, width, height, invert);
-    if (copy) {
-      imageEditorService.copyImage(filepath, width, height, invert);
+  public void exec(final EditorType editorType, final String filepath, final Integer width, final Integer height, final boolean invert) {
+    switch (editorType) {
+      case ASCII -> flameService.printFlame(filepath, width, height, invert);
+      case COPY -> imageEditorService.copyImage(filepath, width, height, invert);
     }
   }
 }

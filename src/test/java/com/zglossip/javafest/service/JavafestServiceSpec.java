@@ -1,6 +1,7 @@
 package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.base.TestBase;
+import com.zglossip.javafest.domain.enums.EditorType;
 import com.zglossip.javafest.service.flame.FlameService;
 import com.zglossip.javafest.service.image.ImageEditorService;
 import org.junit.jupiter.api.Test;
@@ -18,15 +19,16 @@ public class JavafestServiceSpec extends TestBase {
   JavafestService javafestService = new JavafestService(flameService, imageEditorService);
 
   @Test
-  public void testExec() {
+  public void testExecAscii() {
     //Given
+    final EditorType editorType = EditorType.ASCII;
     final String filepath = "test.com";
     final Integer width = 100;
     final Integer height = 101;
     final boolean invert = true;
 
     //When
-    javafestService.exec(filepath, width, height, invert, false);
+    javafestService.exec(editorType, filepath, width, height, invert);
 
     //Then
     final InOrder inOrder = inOrder(flameService);
@@ -34,6 +36,22 @@ public class JavafestServiceSpec extends TestBase {
     inOrder.verify(flameService, times(1)).printFlame(filepath, width, height, invert);
   }
 
-  //TODO Add test case for copy
+  @Test
+  public void testExecCopy() {
+    //Given
+    final EditorType editorType = EditorType.COPY;
+    final String filepath = "test.com";
+    final Integer width = 100;
+    final Integer height = 101;
+    final boolean invert = true;
+
+    //When
+    javafestService.exec(editorType, filepath, width, height, invert);
+
+    //Then
+    final InOrder inOrder = inOrder(imageEditorService);
+
+    inOrder.verify(imageEditorService, times(1)).copyImage(filepath, width, height, invert);
+  }
 
 }
