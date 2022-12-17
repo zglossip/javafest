@@ -17,50 +17,52 @@ public class FlameService {
     this.printService = printService;
   }
 
-  public void printFlame(final String filepath, final Integer width, final Integer height, final boolean invert) {
+  public void printFlame(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
     if (filepath == null) {
-      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, invert);
+      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, invert, footer);
       return;
     }
 
-    printCustomImage(filepath, width, height, invert);
+    printCustomImage(filepath, width, height, invert, footer);
   }
 
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height, final boolean inverted) {
+  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height, final boolean inverted, final boolean footer) {
     if (inverted) {
-      printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(width, height);
+      printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(width, height, footer);
     } else {
-      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height);
+      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, footer);
     }
   }
 
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height) {
-    printImage(flameVisualsService.getMkAscii(width, height));
+  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height, final boolean footer) {
+    printImage(flameVisualsService.getMkAscii(width, height), footer);
   }
 
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(final Integer width, final Integer height) {
-    printImage(flameVisualsService.getInvertedMkAscii(width, height));
+  private void printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(final Integer width, final Integer height, final boolean footer) {
+    printImage(flameVisualsService.getInvertedMkAscii(width, height), footer);
   }
 
-  private void printCustomImage(final String filepath, final Integer width, final Integer height, final boolean inverted) {
+  private void printCustomImage(final String filepath, final Integer width, final Integer height, final boolean inverted, final boolean footer) {
     if (inverted) {
-      printCustomImageInverted(filepath, width, height);
+      printCustomImageInverted(filepath, width, height, footer);
     } else {
-      printCustomImage(filepath, width, height);
+      printCustomImage(filepath, width, height, footer);
     }
   }
 
-  private void printCustomImage(final String filepath, final Integer width, final Integer height) {
-    printImage(flameVisualsService.getCustomAscii(filepath, width, height));
+  private void printCustomImage(final String filepath, final Integer width, final Integer height, final boolean footer) {
+    printImage(flameVisualsService.getCustomAscii(filepath, width, height), footer);
   }
 
-  private void printCustomImageInverted(final String filepath, final Integer width, final Integer height) {
-    printImage(flameVisualsService.getCustomAsciiInverted(filepath, width, height));
+  private void printCustomImageInverted(final String filepath, final Integer width, final Integer height, final boolean footer) {
+    printImage(flameVisualsService.getCustomAsciiInverted(filepath, width, height), footer);
   }
 
-  private void printImage(final AsciiImage image) {
+  private void printImage(final AsciiImage image, final boolean footer) {
     printService.printText(image.getImage());
-    printService.printText(flameVisualsService.getFooter(image.getWidth()));
+    if (footer) {
+      printService.printText(flameVisualsService.getFooter(image.getWidth()));
+    }
   }
 
 }

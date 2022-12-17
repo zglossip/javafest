@@ -16,50 +16,94 @@ public class FlameServiceSpec extends TestBase {
   FlameService flameService = new FlameService(flameVisualsService, printService);
 
   @Test
-  public void testPrintMadelineKahnAsMrsWhiteInClueSayingFlames() {
+  public void testPrintDefault() {
     //Given
     final Integer width = 100;
     final Integer height = 100;
     final boolean inverted = false;
+    final boolean footer = false;
 
     final String mkAscii = "MK ASCII";
-    final String footer = "FOOTER";
 
     when(flameVisualsService.getMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
-    when(flameVisualsService.getFooter(width)).thenReturn(footer);
 
     //When
-    flameService.printFlame(null, width, height, inverted);
+    flameService.printFlame(null, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
 
     inOrder.verify(printService, times(1)).printText(mkAscii);
-    inOrder.verify(printService, times(1)).printText(footer);
     inOrder.verifyNoMoreInteractions();
   }
 
   @Test
-  public void testPrintMadelineKahnAsMrsWhiteInClueSayingFlamesInverted() {
+  public void testDefaultSayingFlames() {
     //Given
     final Integer width = 100;
     final Integer height = 100;
-    final boolean inverted = true;
+    final boolean inverted = false;
+    final boolean footer = true;
 
     final String mkAscii = "MK ASCII";
-    final String footer = "FOOTER";
+    final String footerText = "FOOTER";
 
-    when(flameVisualsService.getInvertedMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
-    when(flameVisualsService.getFooter(width)).thenReturn(footer);
+    when(flameVisualsService.getMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
+    when(flameVisualsService.getFooter(width)).thenReturn(footerText);
 
     //When
-    flameService.printFlame(null, width, height, inverted);
+    flameService.printFlame(null, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
 
     inOrder.verify(printService, times(1)).printText(mkAscii);
-    inOrder.verify(printService, times(1)).printText(footer);
+    inOrder.verify(printService, times(1)).printText(footerText);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @Test
+  public void testDefaultInverted() {
+    //Given
+    final Integer width = 100;
+    final Integer height = 100;
+    final boolean inverted = true;
+    final boolean footer = false;
+
+    final String mkAscii = "MK ASCII";
+
+    when(flameVisualsService.getInvertedMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
+
+    //When
+    flameService.printFlame(null, width, height, inverted, footer);
+
+    //Then
+    final InOrder inOrder = inOrder(printService);
+
+    inOrder.verify(printService, times(1)).printText(mkAscii);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  @Test
+  public void testCustom() {
+    //Given
+    final Integer width = 100;
+    final Integer height = 100;
+    final String filepath = "file.jpg";
+    final boolean inverted = false;
+    final boolean footer = false;
+
+    final String ascii = "ASCII";
+
+    when(flameVisualsService.getCustomAscii(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
+
+    //When
+    flameService.printFlame(filepath, width, height, inverted, footer);
+
+    //Then
+    final InOrder inOrder = inOrder(printService);
+
+    inOrder.verify(printService, times(1)).printText(ascii);
     inOrder.verifyNoMoreInteractions();
   }
 
@@ -70,46 +114,45 @@ public class FlameServiceSpec extends TestBase {
     final Integer height = 100;
     final String filepath = "file.jpg";
     final boolean inverted = false;
+    final boolean footer = true;
 
     final String ascii = "ASCII";
-    final String footer = "FOOTER";
+    final String footerText = "FOOTER";
 
     when(flameVisualsService.getCustomAscii(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
-    when(flameVisualsService.getFooter(width)).thenReturn(footer);
+    when(flameVisualsService.getFooter(width)).thenReturn(footerText);
 
     //When
-    flameService.printFlame(filepath, width, height, inverted);
+    flameService.printFlame(filepath, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
 
     inOrder.verify(printService, times(1)).printText(ascii);
-    inOrder.verify(printService, times(1)).printText(footer);
+    inOrder.verify(printService, times(1)).printText(footerText);
     inOrder.verifyNoMoreInteractions();
   }
 
   @Test
-  public void testCustomSayingFlamesInverted() {
+  public void testCustomInverted() {
     //Given
     final Integer width = 100;
     final Integer height = 100;
     final String filepath = "file.jpg";
     final boolean inverted = true;
+    final boolean footer = false;
 
     final String ascii = "ASCII";
-    final String footer = "FOOTER";
 
     when(flameVisualsService.getCustomAsciiInverted(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
-    when(flameVisualsService.getFooter(width)).thenReturn(footer);
 
     //When
-    flameService.printFlame(filepath, width, height, inverted);
+    flameService.printFlame(filepath, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
 
     inOrder.verify(printService, times(1)).printText(ascii);
-    inOrder.verify(printService, times(1)).printText(footer);
     inOrder.verifyNoMoreInteractions();
   }
 

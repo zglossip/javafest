@@ -18,9 +18,9 @@ public class JavafestService {
     this.imageEditorService = imageEditorService;
   }
 
-  public void exec(final EditorType editorType, final String filepath, final Integer width, final Integer height, final boolean invert) {
+  public void exec(final EditorType editorType, final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
     switch (editorType) {
-      case ASCII -> flameService.printFlame(filepath, width, height, invert);
+      case ASCII -> flameService.printFlame(filepath, width, height, invert, footer);
       case COPY -> imageEditorService.copyImage(filepath, width, height, invert);
     }
   }
