@@ -20,7 +20,7 @@ public class JavafestService {
   public void exec(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean copy) {
     flameService.printFlame(filepath, width, height, invert);
     if (copy) {
-      imageEditorService.copyImage(filepath, width, height);
+      imageEditorService.copyImage(filepath, width, height, invert);
     }
   }
 }

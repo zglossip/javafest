@@ -57,3 +57,7 @@ Add ability to invert image
 ### V1.6.0
 
 Add ability to copy
+
+#### V1.6.1
+
+Add ability to invert copied image

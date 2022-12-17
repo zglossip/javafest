@@ -97,11 +97,10 @@ public class FlameVisualsService {
     }
   }
 
+  //TODO Replace this with ImageTraversalService
   public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final Function<Color, Color> colorFunc) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
-    System.out.println(image.getWidth());
-    System.out.println(image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
 
     for (int y = 0; y < validatedHeight; y++) {

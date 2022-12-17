@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
 public class ImageEditorServiceSpec {
 
   final ImageIOService imageIOService = Mockito.mock(ImageIOService.class);
-  final ImageScaleService imageScaleService = Mockito.mock(ImageScaleService.class);
+  final ImageTransformService imageTransformService = Mockito.mock(ImageTransformService.class);
 
-  final ImageEditorService imageEditorService = new ImageEditorService(imageIOService, imageScaleService);
+  final ImageEditorService imageEditorService = new ImageEditorService(imageIOService, imageTransformService);
 
   @Test
   public void testCopy() {
@@ -25,6 +25,7 @@ public class ImageEditorServiceSpec {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = 140;
     final Integer height = 170;
+    final boolean invert = true;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -32,10 +33,10 @@ public class ImageEditorServiceSpec {
     when(image.getHeight()).thenReturn(200);
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
-    when(imageScaleService.getScaledImage(image, width, height)).thenReturn(scaledImage);
+    when(imageTransformService.getScaledImage(image, width, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height);
+    imageEditorService.copyImage(filepath, width, height, invert);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -48,6 +49,7 @@ public class ImageEditorServiceSpec {
     final String filepath = null;
     final Integer width = 140;
     final Integer height = 170;
+    final boolean invert = true;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -55,10 +57,10 @@ public class ImageEditorServiceSpec {
     when(image.getHeight()).thenReturn(200);
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(InputStream.class))).thenReturn(image);
-    when(imageScaleService.getScaledImage(image, width, height)).thenReturn(scaledImage);
+    when(imageTransformService.getScaledImage(image, width, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height);
+    imageEditorService.copyImage(filepath, width, height, invert);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -70,6 +72,7 @@ public class ImageEditorServiceSpec {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = null;
     final Integer height = 170;
+    final boolean invert = true;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -77,10 +80,10 @@ public class ImageEditorServiceSpec {
     when(image.getHeight()).thenReturn(200);
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
-    when(imageScaleService.getScaledImage(image, 200, height)).thenReturn(scaledImage);
+    when(imageTransformService.getScaledImage(image, 200, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height);
+    imageEditorService.copyImage(filepath, width, height, invert);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -92,6 +95,7 @@ public class ImageEditorServiceSpec {
     final String filepath = "./src/test/resources/good_for_her.jpg";
     final Integer width = 140;
     final Integer height = null;
+    final boolean invert = true;
 
     final BufferedImage image = Mockito.mock(BufferedImage.class);
     final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
@@ -99,10 +103,10 @@ public class ImageEditorServiceSpec {
     when(image.getHeight()).thenReturn(200);
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
-    when(imageScaleService.getScaledImage(image, width, 200)).thenReturn(scaledImage);
+    when(imageTransformService.getScaledImage(image, width, 200)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height);
+    imageEditorService.copyImage(filepath, width, height, invert);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);

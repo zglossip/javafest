@@ -10,31 +10,37 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
+import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
 public class ImageEditorService {
 
   private final ImageIOService imageIOService;
-  private final ImageScaleService imageScaleService;
+  private final ImageTransformService imageTransformService;
 
   @Autowired
-  public ImageEditorService(final ImageIOService imageIOService, final ImageScaleService imageScaleService) {
+  public ImageEditorService(final ImageIOService imageIOService, final ImageTransformService imageTransformService) {
     this.imageIOService = imageIOService;
-    this.imageScaleService = imageScaleService;
+    this.imageTransformService = imageTransformService;
   }
 
-  public void copyImage(final String filepath, final Integer width, final Integer height) {
+  public void copyImage(final String filepath, final Integer width, final Integer height, final boolean invert) {
 
-    final BufferedImage image;
+    BufferedImage image;
     try {
       image = imageIOService.read(validateAndGetInputStream(filepath));
     } catch (final IOException e) {
       throw new ImageException();
     }
 
-    imageIOService.write(imageScaleService.getScaledImage(image, validateWidth(width, image.getWidth()), validateHeight(height, image.getHeight())));
+    if (invert) {
+      image = imageTransformService.getColoredImage(image, List.of(INVERT_COLOR_FUNC));
+    }
+
+    imageIOService.write(imageTransformService.getScaledImage(image, validateWidth(width, image.getWidth()), validateHeight(height, image.getHeight())));
   }
 
   private InputStream validateAndGetInputStream(final String filepath) throws IOException {
