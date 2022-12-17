@@ -1,17 +1,16 @@
 package com.zglossip.javafest.service;
 
+import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.service.flame.FlameService;
 import com.zglossip.javafest.service.image.ImageEditorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
-@SpringBootTest
-public class JavafestServiceSpec {
+public class JavafestServiceSpec extends TestBase {
 
   FlameService flameService = Mockito.mock(FlameService.class);
   ImageEditorService imageEditorService = Mockito.mock(ImageEditorService.class);

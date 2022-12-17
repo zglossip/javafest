@@ -1,8 +1,8 @@
 package com.zglossip.javafest.service.flame;
 
+import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Function;
 
-@SpringBootTest
-public class FlameVisualsServiceSpec {
+public class FlameVisualsServiceSpec extends TestBase {
 
   //TODO Clean up test data (it's currently faulty)
 

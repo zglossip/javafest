@@ -1,15 +1,14 @@
 package com.zglossip.javafest.service.flame;
 
+import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
 import com.zglossip.javafest.service.PrintService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class FlameServiceSpec {
+public class FlameServiceSpec extends TestBase {
 
   FlameVisualsService flameVisualsService = mock(FlameVisualsService.class);
   PrintService printService = mock(PrintService.class);

@@ -1,9 +1,9 @@
 package com.zglossip.javafest.service.image;
 
+import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.service.ImageIOService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -11,8 +11,7 @@ import java.io.InputStream;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class ImageEditorServiceSpec {
+public class ImageEditorServiceSpec extends TestBase {
 
   final ImageIOService imageIOService = Mockito.mock(ImageIOService.class);
   final ImageTransformService imageTransformService = Mockito.mock(ImageTransformService.class);
