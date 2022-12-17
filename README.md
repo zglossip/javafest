@@ -16,7 +16,6 @@ in Clue saying flames. I like to think that justifies its own release.
 * To specify a custom picture (to say "flames"), add `-p <FILE_PATH>`
 * To invert image colors, add `-i`
 * To create a local copy of the image of the specified size, add `-c`
-    * NOTE: Inversion does not currently work with the copy
 
 ## History
 
