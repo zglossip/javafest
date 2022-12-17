@@ -62,6 +62,38 @@ public class ArgumentUtilSpec {
   }
 
   @Test
+  public void testCopyArgument() {
+    //Given
+    final String[] args = new String[1];
+    args[0] = "-c";
+
+    final Map<ArgumentType, Object> expected = new HashMap<>();
+    expected.put(ArgumentType.COPY, Boolean.TRUE);
+
+    //When
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
+
+    //Then
+    assert result.equals(expected);
+  }
+
+  @Test
+  public void testInvertedArgument() {
+    //Given
+    final String[] args = new String[1];
+    args[0] = "-i";
+
+    final Map<ArgumentType, Object> expected = new HashMap<>();
+    expected.put(ArgumentType.INVERTED, Boolean.TRUE);
+
+    //When
+    final Map<ArgumentType, Object> result = ArgumentUtil.getArguments(args);
+
+    //Then
+    assert result.equals(expected);
+  }
+
+  @Test
   public void testMultipleArguments() {
     //Given
     final String[] args = new String[4];

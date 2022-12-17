@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 @Service
 public class ImageTraversalService {
 
+  //TODO: Write test
   public void traverseImage(final int width, final int height, final BiConsumer<Integer, Integer> cellConsumer, final Consumer<Integer> rowConsumer) {
     for (int y = 0; y < height; y++) {
       if (rowConsumer != null) {

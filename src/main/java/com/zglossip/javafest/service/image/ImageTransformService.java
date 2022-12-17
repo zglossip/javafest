@@ -1,6 +1,7 @@
 package com.zglossip.javafest.service.image;
 
 import com.zglossip.javafest.service.ImageTraversalService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -14,10 +15,12 @@ public class ImageTransformService {
 
   private final ImageTraversalService imageTraversalService;
 
+  @Autowired
   public ImageTransformService(final ImageTraversalService imageTraversalService) {
     this.imageTraversalService = imageTraversalService;
   }
 
+  //TODO Write test
   public BufferedImage getScaledImage(final BufferedImage image, final Integer width, final Integer height) {
     final BufferedImage scaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -28,6 +31,7 @@ public class ImageTransformService {
     return scaled;
   }
 
+  //TODO Write test
   public BufferedImage getColoredImage(final BufferedImage image, final List<Function<Color, Color>> colorFuncs) {
     if (colorFuncs.isEmpty()) {
       return image;

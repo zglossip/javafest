@@ -14,8 +14,6 @@ import java.util.function.Function;
 
 public class FlameVisualsServiceSpec extends TestBase {
 
-  //TODO Clean up test data (it's currently faulty)
-
   FlameVisualsService flameVisualsService = new FlameVisualsService();
 
   @Test

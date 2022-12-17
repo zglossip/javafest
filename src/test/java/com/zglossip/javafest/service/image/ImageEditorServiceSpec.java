@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 import static org.mockito.Mockito.*;
 
 public class ImageEditorServiceSpec extends TestBase {
@@ -103,6 +104,31 @@ public class ImageEditorServiceSpec extends TestBase {
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
     when(imageTransformService.getScaledImage(image, width, 200)).thenReturn(scaledImage);
+
+    //When
+    imageEditorService.copyImage(filepath, width, height, invert);
+
+    //Then
+    verify(imageIOService, times(1)).write(scaledImage);
+  }
+
+  @Test
+  public void testCopyInverted() {
+    //Given
+    final String filepath = "./src/test/resources/good_for_her.jpg";
+    final Integer width = 140;
+    final Integer height = 170;
+    final boolean invert = true;
+
+    final BufferedImage image = Mockito.mock(BufferedImage.class);
+    final BufferedImage scaledImage = Mockito.mock(BufferedImage.class);
+    final BufferedImage invertedImage = Mockito.mock(BufferedImage.class);
+
+    when(image.getHeight()).thenReturn(200);
+    when(image.getWidth()).thenReturn(200);
+    when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
+    when(imageTransformService.getColoredImage(eq(image), argThat(t -> t.contains(INVERT_COLOR_FUNC)))).thenReturn(invertedImage);
+    when(imageTransformService.getScaledImage(invertedImage, width, height)).thenReturn(scaledImage);
 
     //When
     imageEditorService.copyImage(filepath, width, height, invert);
