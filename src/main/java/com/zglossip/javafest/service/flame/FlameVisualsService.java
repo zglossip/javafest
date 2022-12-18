@@ -1,6 +1,7 @@
 package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.exceptions.ImageException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.function.Function;
 
 import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
 import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
@@ -44,7 +44,7 @@ public class FlameVisualsService {
     return getMkAscii(width, height, INVERT_COLOR_FUNC);
   }
 
-  private AsciiImage getMkAscii(final Integer width, final Integer height, final Function<Color, Color> colorFunc) {
+  private AsciiImage getMkAscii(final Integer width, final Integer height, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
     return getAsciiStringFromImage(width, height, getMkImage(), colorFunc);
   }
 
@@ -56,7 +56,7 @@ public class FlameVisualsService {
     return getCustomAscii(filepath, width, height, INVERT_COLOR_FUNC);
   }
 
-  private AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height, final Function<Color, Color> colorFunc) {
+  private AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
     return getAsciiStringFromImage(width, height, getCustomImage(filepath), colorFunc);
   }
 
@@ -98,7 +98,7 @@ public class FlameVisualsService {
   }
 
   //TODO Replace this with ImageTraversalService
-  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final Function<Color, Color> colorFunc) {
+  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
     final StringBuilder asciiString = new StringBuilder();
@@ -110,9 +110,11 @@ public class FlameVisualsService {
       for (int x = 0; x < validatedWidth; x++) {
         final int convertedX = convertPosition(x, validatedWidth, image.getWidth());
         final int convertedY = convertPosition(y, validatedHeight, image.getHeight());
-        Color color = new Color(image.getRGB(convertedX, convertedY), true);
+        final Color color;
         if (colorFunc != null) {
-          color = colorFunc.apply(color);
+          color = colorFunc.apply(image, convertedX, convertedY);
+        } else {
+          color = new Color(image.getRGB(convertedX, convertedY), true);
         }
         asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen()));
       }

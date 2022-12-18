@@ -2,6 +2,7 @@ package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.domain.TriFunction;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -10,7 +11,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
 
 public class FlameVisualsServiceSpec extends TestBase {
 
@@ -78,7 +78,7 @@ public class FlameVisualsServiceSpec extends TestBase {
     final Integer width = null;
     final Integer height = null;
 
-    final Function<Color, Color> colorFunc = color -> Color.CYAN;
+    final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc = (i, x, y) -> Color.CYAN;
 
     //When
     final AsciiImage result = flameVisualsService.getAsciiStringFromImage(width, height, getTestImage(), colorFunc);

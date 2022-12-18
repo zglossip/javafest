@@ -1,5 +1,6 @@
 package com.zglossip.javafest.service.image;
 
+import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.service.ImageTraversalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ImageTransformService {
@@ -31,24 +32,20 @@ public class ImageTransformService {
     return scaled;
   }
 
-  //TODO Write test
-  public BufferedImage getColoredImage(final BufferedImage image, final List<Function<Color, Color>> colorFuncs) {
-    if (colorFuncs.isEmpty()) {
-      return image;
-    }
+  public BufferedImage getTransformedImage(final BufferedImage image, final List<TriFunction<BufferedImage, Integer, Integer, Color>> funcs) {
+    final BufferedImage transformedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-    final BufferedImage coloredImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    final List<BiConsumer<Integer, Integer>> cellConsumers = funcs.stream().map(func -> {
+      final BiConsumer<Integer, Integer> function = (x, y) -> {
+        final Color color = func.apply(image, x, y);
+        transformedImage.setRGB(x, y, color.getRGB());
+      };
 
-    final BiConsumer<Integer, Integer> cellConsumer = (x, y) -> {
-      colorFuncs.forEach(func -> {
-        final Color color = func.apply(new Color(image.getRGB(x, y), true));
-        coloredImage.setRGB(x, y, color.getRGB());
-      });
-    };
+      return function;
+    }).collect(Collectors.toList());
 
-    imageTraversalService.traverseImage(coloredImage.getWidth(), coloredImage.getHeight(), cellConsumer, null);
+    imageTraversalService.traverseImage(transformedImage.getWidth(), transformedImage.getHeight(), cellConsumers, false);
 
-    return coloredImage;
-
+    return transformedImage;
   }
 }

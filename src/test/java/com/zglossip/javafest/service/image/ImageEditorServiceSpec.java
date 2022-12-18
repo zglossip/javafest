@@ -36,10 +36,31 @@ public class ImageEditorServiceSpec extends TestBase {
     when(imageTransformService.getScaledImage(image, width, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height, invert);
+    imageEditorService.printImage(filepath, width, height, invert, false);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
+  }
+
+  @Test
+  public void testCopyWithFooter() {
+    //Given
+    final String filepath = "./src/test/resources/good_for_her.jpg";
+    final Integer width = 140;
+    final Integer height = 170;
+    final boolean invert = false;
+    final boolean footer = true;
+
+    //When
+    try {
+      imageEditorService.printImage(filepath, width, height, invert, footer);
+    } catch (final RuntimeException e) {
+      return;
+    }
+
+    //Shouldn't reach this
+    assert false;
+
   }
 
   //TODO: I don't like this test, but I just don't want to deal with this right now
@@ -60,7 +81,7 @@ public class ImageEditorServiceSpec extends TestBase {
     when(imageTransformService.getScaledImage(image, width, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height, invert);
+    imageEditorService.printImage(filepath, width, height, invert, false);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -83,7 +104,7 @@ public class ImageEditorServiceSpec extends TestBase {
     when(imageTransformService.getScaledImage(image, 200, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height, invert);
+    imageEditorService.printImage(filepath, width, height, invert, false);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -106,7 +127,7 @@ public class ImageEditorServiceSpec extends TestBase {
     when(imageTransformService.getScaledImage(image, width, 200)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height, invert);
+    imageEditorService.printImage(filepath, width, height, invert, false);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);
@@ -127,11 +148,11 @@ public class ImageEditorServiceSpec extends TestBase {
     when(image.getHeight()).thenReturn(200);
     when(image.getWidth()).thenReturn(200);
     when(imageIOService.read(any(FileInputStream.class))).thenReturn(image);
-    when(imageTransformService.getColoredImage(eq(image), argThat(t -> t.contains(INVERT_COLOR_FUNC)))).thenReturn(invertedImage);
+    when(imageTransformService.getTransformedImage(eq(image), argThat(t -> t.contains(INVERT_COLOR_FUNC)))).thenReturn(invertedImage);
     when(imageTransformService.getScaledImage(invertedImage, width, height)).thenReturn(scaledImage);
 
     //When
-    imageEditorService.copyImage(filepath, width, height, invert);
+    imageEditorService.printImage(filepath, width, height, invert, false);
 
     //Then
     verify(imageIOService, times(1)).write(scaledImage);

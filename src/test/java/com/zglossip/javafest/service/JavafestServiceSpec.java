@@ -34,7 +34,7 @@ public class JavafestServiceSpec extends TestBase {
     //Then
     final InOrder inOrder = inOrder(flameService);
 
-    inOrder.verify(flameService, times(1)).printFlame(filepath, width, height, invert, footer);
+    inOrder.verify(flameService, times(1)).printImage(filepath, width, height, invert, footer);
   }
 
   @Test
@@ -53,7 +53,7 @@ public class JavafestServiceSpec extends TestBase {
     //Then
     final InOrder inOrder = inOrder(imageEditorService);
 
-    inOrder.verify(imageEditorService, times(1)).copyImage(filepath, width, height, invert);
+    inOrder.verify(imageEditorService, times(1)).printImage(filepath, width, height, invert, false);
   }
 
 }

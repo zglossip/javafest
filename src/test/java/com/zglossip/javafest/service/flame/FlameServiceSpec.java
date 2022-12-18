@@ -28,7 +28,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
 
     //When
-    flameService.printFlame(null, width, height, inverted, footer);
+    flameService.printImage(null, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -52,7 +52,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getFooter(width)).thenReturn(footerText);
 
     //When
-    flameService.printFlame(null, width, height, inverted, footer);
+    flameService.printImage(null, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -75,7 +75,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getInvertedMkAscii(width, height)).thenReturn(new AsciiImage(mkAscii, width));
 
     //When
-    flameService.printFlame(null, width, height, inverted, footer);
+    flameService.printImage(null, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -98,7 +98,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getCustomAscii(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
 
     //When
-    flameService.printFlame(filepath, width, height, inverted, footer);
+    flameService.printImage(filepath, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -123,7 +123,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getFooter(width)).thenReturn(footerText);
 
     //When
-    flameService.printFlame(filepath, width, height, inverted, footer);
+    flameService.printImage(filepath, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);
@@ -147,7 +147,7 @@ public class FlameServiceSpec extends TestBase {
     when(flameVisualsService.getCustomAsciiInverted(filepath, width, height)).thenReturn(new AsciiImage(ascii, width));
 
     //When
-    flameService.printFlame(filepath, width, height, inverted, footer);
+    flameService.printImage(filepath, width, height, inverted, footer);
 
     //Then
     final InOrder inOrder = inOrder(printService);

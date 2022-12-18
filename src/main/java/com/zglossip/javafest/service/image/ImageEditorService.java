@@ -1,6 +1,7 @@
 package com.zglossip.javafest.service.image;
 
 import com.zglossip.javafest.exceptions.ImageException;
+import com.zglossip.javafest.service.BaseEditorService;
 import com.zglossip.javafest.service.ImageIOService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -16,7 +17,7 @@ import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
 import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
-public class ImageEditorService {
+public class ImageEditorService extends BaseEditorService {
 
   private final ImageIOService imageIOService;
   private final ImageTransformService imageTransformService;
@@ -27,7 +28,12 @@ public class ImageEditorService {
     this.imageTransformService = imageTransformService;
   }
 
-  public void copyImage(final String filepath, final Integer width, final Integer height, final boolean invert) {
+  @Override
+  public void printImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
+
+    if (footer) {
+      throw new RuntimeException("Cannot print footer");
+    }
 
     BufferedImage image;
     try {
@@ -37,7 +43,7 @@ public class ImageEditorService {
     }
 
     if (invert) {
-      image = imageTransformService.getColoredImage(image, List.of(INVERT_COLOR_FUNC));
+      image = imageTransformService.getTransformedImage(image, List.of(INVERT_COLOR_FUNC));
     }
 
     imageIOService.write(imageTransformService.getScaledImage(image, validateWidth(width, image.getWidth()), validateHeight(height, image.getHeight())));

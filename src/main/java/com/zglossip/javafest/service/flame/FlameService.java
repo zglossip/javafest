@@ -1,12 +1,13 @@
 package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.service.BaseEditorService;
 import com.zglossip.javafest.service.PrintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlameService {
+public class FlameService extends BaseEditorService {
 
   private final FlameVisualsService flameVisualsService;
   private final PrintService printService;
@@ -17,7 +18,8 @@ public class FlameService {
     this.printService = printService;
   }
 
-  public void printFlame(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
+  @Override
+  public void printImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
     if (filepath == null) {
       printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, invert, footer);
       return;

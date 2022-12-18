@@ -20,8 +20,8 @@ public class JavafestService {
 
   public void exec(final EditorType editorType, final String filepath, final Integer width, final Integer height, final boolean invert, final boolean flames) {
     switch (editorType) {
-      case ASCII -> flameService.printFlame(filepath, width, height, invert, flames);
-      case COPY -> imageEditorService.copyImage(filepath, width, height, invert);
+      case ASCII -> flameService.printImage(filepath, width, height, invert, flames);
+      case COPY -> imageEditorService.printImage(filepath, width, height, invert, false);
     }
   }
 }
