@@ -45,10 +45,10 @@ public class JavafestServiceSpec extends TestBase {
     final Integer width = 100;
     final Integer height = 101;
     final boolean invert = true;
-    final boolean footer = false;
+    final boolean flames = false;
 
     //When
-    javafestService.exec(editorType, filepath, width, height, invert, footer);
+    javafestService.exec(editorType, filepath, width, height, invert, flames);
 
     //Then
     final InOrder inOrder = inOrder(imageEditorService);

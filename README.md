@@ -21,12 +21,13 @@ generate a new image to `output.png`
 
 ### Optional Flags
 
-| Flag      | Description |
-| ----------- | ----------- |
+| Flag                    | Description                                      |
+| ----------------------- | ------------------------------------------------ |
 | `-w <NUMBER OF PIXELS>` | The width of the image to be produced in pixels  |
 | `-h <NUMBER OF PIXELS>` | The height of the image to be produced in pixels |
 | `-p <FILE PATH>`        | The image to edit                                |
 | `-i`                    | Invert the image's color                         |
+| `-f`                    | Include flames footer (only applies to ASCII)    |
 
 ---
 

@@ -107,6 +107,24 @@ public class ArgumentUtilServiceSpec {
   }
 
   @Test
+  public void testFlameArgument() {
+    //Given
+    final String[] args = new String[2];
+    args[0] = "ascii";
+    args[1] = "-f";
+
+    final Map<ArgumentType, Object> expected = new HashMap<>();
+    expected.put(ArgumentType.EDITOR_TYPE, EditorType.ASCII);
+    expected.put(ArgumentType.FLAMES, Boolean.TRUE);
+
+    //When
+    final Map<ArgumentType, Object> result = argumentUtilService.getArguments(args);
+
+    //Then
+    assert result.equals(expected);
+  }
+
+  @Test
   public void testInvertedArgument() {
     //Given
     final String[] args = new String[2];
