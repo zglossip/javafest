@@ -1,69 +1,48 @@
 package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.service.BaseEditorService;
+import com.zglossip.javafest.service.ImageUtilService;
 import com.zglossip.javafest.service.PrintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FlameService extends BaseEditorService {
 
   private final FlameVisualsService flameVisualsService;
   private final PrintService printService;
+  private final ImageUtilService imageUtilService;
 
   @Autowired
-  public FlameService(final FlameVisualsService flameVisualsService, final PrintService printService) {
+  public FlameService(final FlameVisualsService flameVisualsService,
+                      final PrintService printService,
+                      final ImageUtilService imageUtilService) {
     this.flameVisualsService = flameVisualsService;
     this.printService = printService;
+    this.imageUtilService = imageUtilService;
   }
 
   @Override
   public void printImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
-    if (filepath == null) {
-      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, invert, footer);
-      return;
+    final List<TriFunction<BufferedImage, Integer, Integer, Color>> functionList = new ArrayList<>();
+
+    if (invert) {
+      functionList.add(imageUtilService.getInvertColorFunction());
     }
 
-    printCustomImage(filepath, width, height, invert, footer);
-  }
+    final AsciiImage asciiImage = flameVisualsService.getAsciiString(filepath, width, height, functionList);
 
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height, final boolean inverted, final boolean footer) {
-    if (inverted) {
-      printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(width, height, footer);
-    } else {
-      printMadelineKahnAsMrsWhiteInClueSayingFlames(width, height, footer);
-    }
-  }
+    printService.printText(asciiImage.getImage());
 
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlames(final Integer width, final Integer height, final boolean footer) {
-    printImage(flameVisualsService.getMkAscii(width, height), footer);
-  }
-
-  private void printMadelineKahnAsMrsWhiteInClueSayingFlamesInverted(final Integer width, final Integer height, final boolean footer) {
-    printImage(flameVisualsService.getInvertedMkAscii(width, height), footer);
-  }
-
-  private void printCustomImage(final String filepath, final Integer width, final Integer height, final boolean inverted, final boolean footer) {
-    if (inverted) {
-      printCustomImageInverted(filepath, width, height, footer);
-    } else {
-      printCustomImage(filepath, width, height, footer);
-    }
-  }
-
-  private void printCustomImage(final String filepath, final Integer width, final Integer height, final boolean footer) {
-    printImage(flameVisualsService.getCustomAscii(filepath, width, height), footer);
-  }
-
-  private void printCustomImageInverted(final String filepath, final Integer width, final Integer height, final boolean footer) {
-    printImage(flameVisualsService.getCustomAsciiInverted(filepath, width, height), footer);
-  }
-
-  private void printImage(final AsciiImage image, final boolean footer) {
-    printService.printText(image.getImage());
     if (footer) {
-      printService.printText(flameVisualsService.getFooter(image.getWidth()));
+      printService.printText(flameVisualsService.getFooter(asciiImage.getWidth()));
     }
   }
 

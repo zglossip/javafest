@@ -3,20 +3,18 @@ package com.zglossip.javafest.service.flame;
 import com.zglossip.javafest.domain.AsciiImage;
 import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.exceptions.ImageException;
-import org.springframework.core.io.ClassPathResource;
+import com.zglossip.javafest.service.ImageIOService;
+import com.zglossip.javafest.service.ImageTraversalService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
-
-import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
-import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
-import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @Service
 public class FlameVisualsService {
@@ -36,28 +34,17 @@ public class FlameVisualsService {
                                                                               
           """;
 
-  public AsciiImage getMkAscii(final Integer width, final Integer height) {
-    return getMkAscii(width, height, null);
-  }
+  private final ImageTraversalService imageTraversalService;
+  private final FlameConsumerService flameConsumerService;
+  private final ImageIOService imageIOService;
 
-  public AsciiImage getInvertedMkAscii(final Integer width, final Integer height) {
-    return getMkAscii(width, height, INVERT_COLOR_FUNC);
-  }
-
-  private AsciiImage getMkAscii(final Integer width, final Integer height, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
-    return getAsciiStringFromImage(width, height, getMkImage(), colorFunc);
-  }
-
-  public AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height) {
-    return getCustomAscii(filepath, width, height, null);
-  }
-
-  public AsciiImage getCustomAsciiInverted(final String filepath, final Integer width, final Integer height) {
-    return getCustomAscii(filepath, width, height, INVERT_COLOR_FUNC);
-  }
-
-  private AsciiImage getCustomAscii(final String filepath, final Integer width, final Integer height, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
-    return getAsciiStringFromImage(width, height, getCustomImage(filepath), colorFunc);
+  @Autowired
+  public FlameVisualsService(final ImageTraversalService imageTraversalService,
+                             final FlameConsumerService flameConsumerService,
+                             final ImageIOService imageIOService) {
+    this.imageTraversalService = imageTraversalService;
+    this.flameConsumerService = flameConsumerService;
+    this.imageIOService = imageIOService;
   }
 
   public String getFooter(final int width) {
@@ -72,59 +59,33 @@ public class FlameVisualsService {
     return stringBuilder.toString();
   }
 
-  private static BufferedImage getMkImage() {
+  public AsciiImage getAsciiString(final String filepath, final Integer width, final Integer height, final List<TriFunction<BufferedImage, Integer, Integer, Color>> functionList) {
+    final BufferedImage image;
     try {
-      return getImage(new ClassPathResource(IMAGE_PATH).getInputStream());
+      image = imageIOService.read(filepath);
     } catch (final IOException e) {
       throw new ImageException();
     }
-  }
-
-  private static BufferedImage getCustomImage(final String filepath) {
-    try {
-      return getImage(new FileInputStream(filepath));
-    } catch (final IOException e) {
-      throw new ImageException();
-    }
-  }
-
-  //TODO: Replace this with ImageIOService
-  private static BufferedImage getImage(final InputStream inputStream) {
-    try {
-      return ImageIO.read(inputStream);
-    } catch (final IOException e) {
-      throw new ImageException();
-    }
-  }
-
-  //TODO Replace this with ImageTraversalService
-  public static AsciiImage getAsciiStringFromImage(final Integer width, final Integer height, final BufferedImage image, final TriFunction<BufferedImage, Integer, Integer, Color> colorFunc) {
     final int validatedWidth = getValidatedWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = getValidatedHeight(height, validatedWidth, image.getWidth(), image.getHeight());
+
     final StringBuilder asciiString = new StringBuilder();
 
-    for (int y = 0; y < validatedHeight; y++) {
-      if (y % 2 != 0) {
-        continue;
-      }
-      for (int x = 0; x < validatedWidth; x++) {
-        final int convertedX = convertPosition(x, validatedWidth, image.getWidth());
-        final int convertedY = convertPosition(y, validatedHeight, image.getHeight());
-        final Color color;
-        if (colorFunc != null) {
-          color = colorFunc.apply(image, convertedX, convertedY);
-        } else {
-          color = new Color(image.getRGB(convertedX, convertedY), true);
-        }
-        asciiString.append(getCharacterFromColor(color.getRed(), color.getBlue(), color.getGreen()));
-      }
-      asciiString.append("\n");
-    }
+    final List<BiConsumer<Integer, Integer>> cellConsumers = flameConsumerService.getAsciiCellConsumers(
+            validatedWidth,
+            validatedHeight,
+            image,
+            functionList,
+            asciiString);
+
+    final List<Consumer<Integer>> rowConsumer = flameConsumerService.getAsciiRowConsumer(asciiString);
+
+    imageTraversalService.traverseImage(validatedWidth, validatedHeight, cellConsumers, rowConsumer, true);
 
     return new AsciiImage(asciiString.toString(), validatedWidth);
   }
 
-  private static int getValidatedWidth(final Integer width, final Integer height, final int origWidth, final int orgHeight) {
+  private int getValidatedWidth(final Integer width, final Integer height, final int origWidth, final int orgHeight) {
     if (width == null) {
       if (height == null) {
         return DEFAULT_SIZE;
@@ -136,7 +97,7 @@ public class FlameVisualsService {
     return width;
   }
 
-  private static int getValidatedHeight(final Integer height, final int validatedWidth, final int origWidth, final int orgHeight) {
+  private int getValidatedHeight(final Integer height, final int validatedWidth, final int origWidth, final int orgHeight) {
     if (height == null) {
       final double multiplier = (double) orgHeight / origWidth;
       return (int) Math.round(validatedWidth * multiplier);
@@ -145,12 +106,7 @@ public class FlameVisualsService {
     return height;
   }
 
-  private static int convertPosition(final int position, final int validatedSize, final int actualSize) {
-    final double multiplier = (double) actualSize / validatedSize;
-    return (int) Math.round(multiplier * position);
-  }
-
-  private static String getSpaces(final int numberOfSpaces) {
+  private String getSpaces(final int numberOfSpaces) {
     final StringBuilder spacesBuilder = new StringBuilder();
     for (int i = 0; i < numberOfSpaces; i++) {
       spacesBuilder.append(" ");

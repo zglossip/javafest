@@ -1,31 +1,34 @@
 package com.zglossip.javafest.service.image;
 
+import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.exceptions.ImageException;
 import com.zglossip.javafest.service.BaseEditorService;
 import com.zglossip.javafest.service.ImageIOService;
+import com.zglossip.javafest.service.ImageUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.zglossip.javafest.util.ImageUtil.IMAGE_PATH;
-import static com.zglossip.javafest.util.ImageUtil.INVERT_COLOR_FUNC;
 
 @Service
 public class ImageEditorService extends BaseEditorService {
 
   private final ImageIOService imageIOService;
   private final ImageTransformService imageTransformService;
+  private final ImageUtilService imageUtilService;
 
   @Autowired
-  public ImageEditorService(final ImageIOService imageIOService, final ImageTransformService imageTransformService) {
+  public ImageEditorService(final ImageIOService imageIOService,
+                            final ImageTransformService imageTransformService,
+                            final ImageUtilService imageUtilService) {
     this.imageIOService = imageIOService;
     this.imageTransformService = imageTransformService;
+    this.imageUtilService = imageUtilService;
   }
 
   @Override
@@ -35,38 +38,54 @@ public class ImageEditorService extends BaseEditorService {
       throw new RuntimeException("Cannot print footer");
     }
 
-    BufferedImage image;
+    final BufferedImage image;
     try {
-      image = imageIOService.read(validateAndGetInputStream(filepath));
+      image = imageIOService.read(filepath);
     } catch (final IOException e) {
       throw new ImageException();
     }
 
+    final List<TriFunction<BufferedImage, Integer, Integer, Color>> functionList = new ArrayList<>();
+
     if (invert) {
-      image = imageTransformService.getTransformedImage(image, List.of(INVERT_COLOR_FUNC));
+      functionList.add(imageUtilService.getInvertColorFunction());
     }
 
-    imageIOService.write(imageTransformService.getScaledImage(image, validateWidth(width, image.getWidth()), validateHeight(height, image.getHeight())));
-  }
+    final int validatedWidth = validateWidth(width, height, image.getWidth(), image.getHeight());
+    final int validatedHeight = validateHeight(
+            height,
+            validatedWidth,
+            image.getHeight(),
+            image.getWidth()
+    );
 
-  private InputStream validateAndGetInputStream(final String filepath) throws IOException {
-    if (filepath == null) {
-      return new ClassPathResource(IMAGE_PATH).getInputStream();
+    if (width != null || height != null) {
+      final BigDecimal xScale = BigDecimal.valueOf((double) image.getWidth() / (double) validatedWidth);
+      final BigDecimal yScale = BigDecimal.valueOf((double) image.getHeight() / (double) validatedHeight);
+      functionList.add(imageUtilService.getScaleFunction(xScale, yScale));
     }
-    return new FileInputStream(filepath);
+
+    final BufferedImage transformedImage = imageTransformService.getTransformedImage(image, validatedWidth, validatedHeight, functionList);
+
+    imageIOService.write(transformedImage);
   }
 
-  private int validateWidth(final Integer width, final int origWidth) {
+  private int validateWidth(final Integer width, final Integer height, final int origWidth, final int orgHeight) {
     if (width == null) {
-      return origWidth;
+      if (height == null) {
+        return origWidth;
+      }
+      final double multiplier = (double) origWidth / orgHeight;
+      return (int) Math.round(height * multiplier);
     }
 
     return width;
   }
 
-  private int validateHeight(final Integer height, final int origHeight) {
+  private int validateHeight(final Integer height, final int validatedWidth, final int origHeight, final int origWidth) {
     if (height == null) {
-      return origHeight;
+      final double multiplier = (double) origHeight / origWidth;
+      return (int) Math.round(validatedWidth * multiplier);
     }
 
     return height;
