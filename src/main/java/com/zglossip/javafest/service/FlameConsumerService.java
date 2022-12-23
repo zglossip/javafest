@@ -1,4 +1,4 @@
-package com.zglossip.javafest.service.flame;
+package com.zglossip.javafest.service;
 
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import static com.zglossip.javafest.util.AsciiUtil.getCharacterFromColor;
 @Service
 public class FlameConsumerService {
 
-  List<BiConsumer<Integer, Integer>> getAsciiCellConsumers(final BufferedImage image, final StringBuilder asciiString) {
+  public List<BiConsumer<Integer, Integer>> getAsciiCellConsumers(final BufferedImage image, final StringBuilder asciiString) {
 
     return List.of((x, y) -> {
       final Color color = new Color(image.getRGB(x, y));
@@ -21,7 +21,7 @@ public class FlameConsumerService {
     });
   }
 
-  List<Consumer<Integer>> getAsciiRowConsumer(final StringBuilder asciiString) {
+  public List<Consumer<Integer>> getAsciiRowConsumer(final StringBuilder asciiString) {
     return List.of(y -> asciiString.append("\n"));
   }
 

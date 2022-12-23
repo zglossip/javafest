@@ -2,6 +2,8 @@ package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.service.FlameService;
+import com.zglossip.javafest.service.FlameVisualsService;
 import com.zglossip.javafest.service.PrintService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;

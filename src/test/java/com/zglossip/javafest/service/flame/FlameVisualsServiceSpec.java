@@ -2,8 +2,10 @@ package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
+import com.zglossip.javafest.service.FlameConsumerService;
+import com.zglossip.javafest.service.FlameVisualsService;
+import com.zglossip.javafest.service.ImageEditorService;
 import com.zglossip.javafest.service.ImageTraversalService;
-import com.zglossip.javafest.service.image.ImageEditorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.stereotype.Component;

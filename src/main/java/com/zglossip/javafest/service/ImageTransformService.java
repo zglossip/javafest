@@ -1,7 +1,6 @@
-package com.zglossip.javafest.service.image;
+package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.domain.TriFunction;
-import com.zglossip.javafest.service.ImageTraversalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

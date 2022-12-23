@@ -1,10 +1,7 @@
-package com.zglossip.javafest.service.image;
+package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.domain.TriFunction;
 import com.zglossip.javafest.exceptions.ImageException;
-import com.zglossip.javafest.service.BaseEditorService;
-import com.zglossip.javafest.service.ImageIOService;
-import com.zglossip.javafest.service.ImageUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

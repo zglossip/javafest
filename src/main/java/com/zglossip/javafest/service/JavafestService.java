@@ -1,8 +1,6 @@
 package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.domain.enums.EditorType;
-import com.zglossip.javafest.service.flame.FlameService;
-import com.zglossip.javafest.service.image.ImageEditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

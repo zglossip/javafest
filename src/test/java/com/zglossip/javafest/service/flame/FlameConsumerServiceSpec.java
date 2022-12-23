@@ -1,6 +1,7 @@
 package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.base.TestBase;
+import com.zglossip.javafest.service.FlameConsumerService;
 import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;

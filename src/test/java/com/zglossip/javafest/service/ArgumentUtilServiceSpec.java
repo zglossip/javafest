@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ArgumentUtilServiceSpec {
 
-  ArgumentUtilService argumentUtilService = new ArgumentUtilService();
+  private final ArgumentUtilService argumentUtilService = new ArgumentUtilService();
 
   @Test
   public void testEditorTypeArgument() {

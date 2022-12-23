@@ -1,8 +1,6 @@
-package com.zglossip.javafest.service.flame;
+package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.domain.AsciiImage;
-import com.zglossip.javafest.service.BaseEditorService;
-import com.zglossip.javafest.service.PrintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

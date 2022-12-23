@@ -2,7 +2,9 @@ package com.zglossip.javafest.service.image;
 
 import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.TriFunction;
+import com.zglossip.javafest.service.ImageEditorService;
 import com.zglossip.javafest.service.ImageIOService;
+import com.zglossip.javafest.service.ImageTransformService;
 import com.zglossip.javafest.service.ImageUtilService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
