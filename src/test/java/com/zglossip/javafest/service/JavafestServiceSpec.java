@@ -27,14 +27,15 @@ public class JavafestServiceSpec extends TestBase {
     final Integer height = 101;
     final boolean invert = true;
     final boolean footer = true;
+    final boolean twoColor = true;
 
     //When
-    javafestService.exec(editorType, filepath, width, height, invert, footer);
+    javafestService.exec(editorType, filepath, width, height, invert, footer, twoColor);
 
     //Then
     final InOrder inOrder = inOrder(flameService);
 
-    inOrder.verify(flameService, times(1)).printImage(filepath, width, height, invert, footer);
+    inOrder.verify(flameService, times(1)).printImage(filepath, width, height, invert, footer, twoColor);
   }
 
   @Test
@@ -46,14 +47,15 @@ public class JavafestServiceSpec extends TestBase {
     final Integer height = 101;
     final boolean invert = true;
     final boolean flames = false;
+    final boolean twoColor = true;
 
     //When
-    javafestService.exec(editorType, filepath, width, height, invert, flames);
+    javafestService.exec(editorType, filepath, width, height, invert, flames, twoColor);
 
     //Then
     final InOrder inOrder = inOrder(imageEditorService);
 
-    inOrder.verify(imageEditorService, times(1)).printImage(filepath, width, height, invert, false);
+    inOrder.verify(imageEditorService, times(1)).printImage(filepath, width, height, invert, false, twoColor);
   }
 
 }

@@ -11,7 +11,7 @@ generate a new image to `output.png`
 
 ## Instructions
 
-* Download most recent `javafest-1.x.x.jar` file from "Releases"
+* Download most recent `javafest-2.x.x.jar` file from "Releases"
 * Navigate to directory in command line and run `java -jar .\<NAME OF JAR> <EDITOR TYPE> <OPTIONAL FLAGS>`
 
 ### Editor Types
@@ -28,6 +28,7 @@ generate a new image to `output.png`
 | `-p <FILE PATH>`        | The image to edit                                |
 | `-i`                    | Invert the image's color                         |
 | `-f`                    | Include flames footer (only applies to ASCII)    |
+| `-t`                    | Convert image to two color contrast              |
 
 ---
 

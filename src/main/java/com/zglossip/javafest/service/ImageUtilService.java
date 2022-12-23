@@ -15,8 +15,21 @@ public class ImageUtilService {
     return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
   };
 
+  private static final TriFunction<BufferedImage, Integer, Integer, Color> TWO_COLOR_FUNCTION = (image, x, y) -> {
+    Color color = new Color(image.getRGB(Math.min(x, image.getWidth() - 1), Math.min(y, image.getHeight() - 1)), true);
+    int bw = (color.getBlue() + color.getGreen() + color.getRed()) / 3;
+    if (bw >= 127) {
+      return Color.WHITE;
+    }
+    return Color.BLACK;
+  };
+
   public TriFunction<BufferedImage, Integer, Integer, Color> getInvertColorFunction() {
     return INVERT_COLOR_FUNCTION;
+  }
+
+  public TriFunction<BufferedImage, Integer, Integer, Color> getTwoColorFunction() {
+    return TWO_COLOR_FUNCTION;
   }
 
   public TriFunction<BufferedImage, Integer, Integer, Color> getScaleFunction(final BigDecimal xScale, final BigDecimal yScale) {

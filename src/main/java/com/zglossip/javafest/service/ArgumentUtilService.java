@@ -45,7 +45,7 @@ public class ArgumentUtilService {
           position++;
           argumentMap.put(argumentType, args[position]);
         }
-        case INVERTED, COPY, FLAMES -> argumentMap.put(argumentType, true);
+        case INVERTED, COPY, FLAMES, TWO_COLOR -> argumentMap.put(argumentType, true);
       }
 
       position++;

@@ -2,8 +2,8 @@ package com.zglossip.javafest.service.flame;
 
 import com.zglossip.javafest.base.TestBase;
 import com.zglossip.javafest.domain.AsciiImage;
-import com.zglossip.javafest.service.ImageIOService;
 import com.zglossip.javafest.service.ImageTraversalService;
+import com.zglossip.javafest.service.image.ImageEditorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
@@ -22,12 +22,12 @@ public class FlameVisualsServiceSpec extends TestBase {
 
   final private ImageTraversalService imageTraversalService = Mockito.mock(ImageTraversalService.class);
   final private FlameConsumerService flameConsumerService = Mockito.mock(FlameConsumerService.class);
-  final private ImageIOService imageIOService = Mockito.mock(ImageIOService.class);
+  final private ImageEditorService imageEditorService = Mockito.mock(ImageEditorService.class);
 
   final private FlameVisualsService flameVisualsService = new FlameVisualsService(
           imageTraversalService,
           flameConsumerService,
-          imageIOService);
+          imageEditorService);
 
   @Test
   public void testAsciiImage() throws IOException {
@@ -38,21 +38,18 @@ public class FlameVisualsServiceSpec extends TestBase {
 
     //And mocks
     final BufferedImage bufferedImage = Mockito.mock(BufferedImage.class);
-    when(imageIOService.read(filePath)).thenReturn(bufferedImage);
+    when(bufferedImage.getWidth()).thenReturn(width);
+    when(bufferedImage.getHeight()).thenReturn(height);
+    when(imageEditorService.getImage(filePath, width, height, false, false)).thenReturn(bufferedImage);
     final List<BiConsumer<Integer, Integer>> cellConsumers = List.of((x, y) -> {
     });
-    when(flameConsumerService.getAsciiCellConsumers(
-            eq(width),
-            eq(height),
-            eq(bufferedImage),
-            argThat(List::isEmpty),
-            any(StringBuilder.class))).thenReturn(cellConsumers);
+    when(flameConsumerService.getAsciiCellConsumers(eq(bufferedImage), any(StringBuilder.class))).thenReturn(cellConsumers);
     final List<Consumer<Integer>> rowConsumer = List.of(x -> {
     });
     when(flameConsumerService.getAsciiRowConsumer(any(StringBuilder.class))).thenReturn(rowConsumer);
 
     //When
-    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, List.of());
+    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, false, false);
 
     //Then
     final AsciiImage expected = new AsciiImage("", width);
@@ -71,28 +68,23 @@ public class FlameVisualsServiceSpec extends TestBase {
     //And mocks
     final BufferedImage bufferedImage = Mockito.mock(BufferedImage.class);
     when(bufferedImage.getWidth()).thenReturn(600);
-    when(bufferedImage.getHeight()).thenReturn(300);
-    when(imageIOService.read(filePath)).thenReturn(bufferedImage);
+    when(bufferedImage.getHeight()).thenReturn(height);
+    when(imageEditorService.getImage(filePath, width, height, false, false)).thenReturn(bufferedImage);
     final List<BiConsumer<Integer, Integer>> cellConsumers = List.of((x, y) -> {
     });
-    when(flameConsumerService.getAsciiCellConsumers(
-            eq(200),
-            eq(height),
-            eq(bufferedImage),
-            argThat(List::isEmpty),
-            any(StringBuilder.class))).thenReturn(cellConsumers);
+    when(flameConsumerService.getAsciiCellConsumers(eq(bufferedImage), any(StringBuilder.class))).thenReturn(cellConsumers);
     final List<Consumer<Integer>> rowConsumer = List.of(x -> {
     });
     when(flameConsumerService.getAsciiRowConsumer(any(StringBuilder.class))).thenReturn(rowConsumer);
 
     //When
-    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, List.of());
+    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, false, false);
 
     //Then
-    final AsciiImage expected = new AsciiImage("", 200);
+    final AsciiImage expected = new AsciiImage("", 600);
     assert Objects.equals(result, expected);
 
-    verify(imageTraversalService, times(1)).traverseImage(eq(200), eq(height), eq(cellConsumers), eq(rowConsumer), eq(true));
+    verify(imageTraversalService, times(1)).traverseImage(eq(600), eq(height), eq(cellConsumers), eq(rowConsumer), eq(true));
   }
 
   @Test
@@ -104,29 +96,26 @@ public class FlameVisualsServiceSpec extends TestBase {
 
     //And mocks
     final BufferedImage bufferedImage = Mockito.mock(BufferedImage.class);
-    when(bufferedImage.getWidth()).thenReturn(600);
+    when(bufferedImage.getWidth()).thenReturn(width);
     when(bufferedImage.getHeight()).thenReturn(300);
-    when(imageIOService.read(filePath)).thenReturn(bufferedImage);
+    when(imageEditorService.getImage(filePath, width, height, false, false)).thenReturn(bufferedImage);
     final List<BiConsumer<Integer, Integer>> cellConsumers = List.of((x, y) -> {
     });
     when(flameConsumerService.getAsciiCellConsumers(
-            eq(width),
-            eq(200),
             eq(bufferedImage),
-            argThat(List::isEmpty),
             any(StringBuilder.class))).thenReturn(cellConsumers);
     final List<Consumer<Integer>> rowConsumer = List.of(x -> {
     });
     when(flameConsumerService.getAsciiRowConsumer(any(StringBuilder.class))).thenReturn(rowConsumer);
 
     //When
-    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, List.of());
+    final AsciiImage result = flameVisualsService.getAsciiString(filePath, width, height, false, false);
 
     //Then
-    final AsciiImage expected = new AsciiImage("", 400);
+    final AsciiImage expected = new AsciiImage("", width);
     assert Objects.equals(result, expected);
 
-    verify(imageTraversalService, times(1)).traverseImage(eq(width), eq(200), eq(cellConsumers), eq(rowConsumer), eq(true));
+    verify(imageTraversalService, times(1)).traverseImage(eq(width), eq(300), eq(cellConsumers), eq(rowConsumer), eq(true));
   }
 
 }

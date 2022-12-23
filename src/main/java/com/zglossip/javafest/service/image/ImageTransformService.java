@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 @Service
 public class ImageTransformService {
@@ -22,17 +21,13 @@ public class ImageTransformService {
     this.imageTraversalService = imageTraversalService;
   }
 
-  public BufferedImage getTransformedImage(final BufferedImage image, final int newWidth, final int newHeight, final List<TriFunction<BufferedImage, Integer, Integer, Color>> funcs) {
+  public BufferedImage getTransformedImage(final BufferedImage image, final int newWidth, final int newHeight, final TriFunction<BufferedImage, Integer, Integer, Color> func) {
     final BufferedImage transformedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 
-    final List<BiConsumer<Integer, Integer>> cellConsumers = funcs.stream().map(func -> {
-      final BiConsumer<Integer, Integer> function = (x, y) -> {
-        final Color color = func.apply(image, x, y);
-        transformedImage.setRGB(x, y, color.getRGB());
-      };
-
-      return function;
-    }).collect(Collectors.toList());
+    final List<BiConsumer<Integer, Integer>> cellConsumers = List.of((x, y) -> {
+      final Color curColor = func.apply(image, x, y);
+      transformedImage.setRGB(x, y, curColor.getRGB());
+    });
 
     imageTraversalService.traverseImage(transformedImage.getWidth(), transformedImage.getHeight(), cellConsumers, Collections.emptyList(), false);
 

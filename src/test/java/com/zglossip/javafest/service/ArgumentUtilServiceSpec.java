@@ -1,11 +1,10 @@
-package com.zglossip.javafest.util;
+package com.zglossip.javafest.service;
 
 import com.zglossip.javafest.domain.enums.ArgumentType;
 import com.zglossip.javafest.domain.enums.EditorType;
 import com.zglossip.javafest.exceptions.InvalidFlagException;
 import com.zglossip.javafest.exceptions.NoEditorTypeException;
 import com.zglossip.javafest.exceptions.NonNumberArgumentException;
-import com.zglossip.javafest.service.ArgumentUtilService;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -116,6 +115,24 @@ public class ArgumentUtilServiceSpec {
     final Map<ArgumentType, Object> expected = new HashMap<>();
     expected.put(ArgumentType.EDITOR_TYPE, EditorType.ASCII);
     expected.put(ArgumentType.FLAMES, Boolean.TRUE);
+
+    //When
+    final Map<ArgumentType, Object> result = argumentUtilService.getArguments(args);
+
+    //Then
+    assert result.equals(expected);
+  }
+
+  @Test
+  public void testTwoColorArgument() {
+    //Given
+    final String[] args = new String[2];
+    args[0] = "ascii";
+    args[1] = "-t";
+
+    final Map<ArgumentType, Object> expected = new HashMap<>();
+    expected.put(ArgumentType.EDITOR_TYPE, EditorType.ASCII);
+    expected.put(ArgumentType.TWO_COLOR, Boolean.TRUE);
 
     //When
     final Map<ArgumentType, Object> result = argumentUtilService.getArguments(args);

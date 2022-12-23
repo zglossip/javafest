@@ -32,12 +32,16 @@ public class ImageEditorService extends BaseEditorService {
   }
 
   @Override
-  public void printImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer) {
+  public void printImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean footer, final boolean twoColor) {
 
     if (footer) {
       throw new RuntimeException("Cannot print footer");
     }
 
+    imageIOService.write(getImage(filepath, width, height, invert, twoColor));
+  }
+
+  public BufferedImage getImage(final String filepath, final Integer width, final Integer height, final boolean invert, final boolean twoColor) {
     final BufferedImage image;
     try {
       image = imageIOService.read(filepath);
@@ -46,10 +50,6 @@ public class ImageEditorService extends BaseEditorService {
     }
 
     final List<TriFunction<BufferedImage, Integer, Integer, Color>> functionList = new ArrayList<>();
-
-    if (invert) {
-      functionList.add(imageUtilService.getInvertColorFunction());
-    }
 
     final int validatedWidth = validateWidth(width, height, image.getWidth(), image.getHeight());
     final int validatedHeight = validateHeight(
@@ -65,9 +65,21 @@ public class ImageEditorService extends BaseEditorService {
       functionList.add(imageUtilService.getScaleFunction(xScale, yScale));
     }
 
-    final BufferedImage transformedImage = imageTransformService.getTransformedImage(image, validatedWidth, validatedHeight, functionList);
+    if (invert) {
+      functionList.add(imageUtilService.getInvertColorFunction());
+    }
 
-    imageIOService.write(transformedImage);
+    if (twoColor) {
+      functionList.add(imageUtilService.getTwoColorFunction());
+    }
+
+    BufferedImage imageToWrite = image;
+
+    for (final TriFunction<BufferedImage, Integer, Integer, Color> func : functionList) {
+      imageToWrite = imageTransformService.getTransformedImage(imageToWrite, validatedWidth, validatedHeight, func);
+    }
+
+    return imageToWrite;
   }
 
   private int validateWidth(final Integer width, final Integer height, final int origWidth, final int orgHeight) {
